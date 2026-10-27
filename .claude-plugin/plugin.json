@@ -1,0 +1,13 @@
+{
+  "name": "game-skills",
+  "description": "A quality bar and an asset pipeline for building web games with Claude Code: game feel, camera, sound, animation, enemy and level variety, balance bots, UI, mobile, and phone performance.",
+  "author": {
+    "name": "Xyloforge",
+    "url": "https://github.com/Xyloforge"
+  },
+  "homepage": "https://github.com/Xyloforge/claude-game-skills",
+  "repository": "https://github.com/Xyloforge/claude-game-skills",
+  "license": "MIT",
+  "keywords": ["games", "game-dev", "canvas", "html5", "performance", "game-feel", "sprites", "sfx", "skills"],
+  "skills": ["./skills/game-detail-bar", "./skills/game-asset-pipeline"]
+}
