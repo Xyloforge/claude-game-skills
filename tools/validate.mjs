@@ -5,6 +5,8 @@
  *   - every skill folder listed in plugin.json has a SKILL.md whose front matter has a `name` matching the folder
  *     and a non-empty `description`;
  *   - every relative Markdown link inside a skill points at a file that exists;
+ *   - no skill file carries private links or machine paths (wiki links like [[note]], ~/.claude/skills paths, home
+ *     folders): skills are general and must work on any machine;
  *   - every .mjs script passes `node --check` and every .py script compiles.
  * Exits 1 on the first group of failures, printing all of them.
  */
@@ -14,6 +16,12 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+// Things that only make sense on one person's machine or notes.
+const PRIVATE = [
+  [/\[\[[^\]]+\]\]/, "private wiki link ([[...]])"],
+  [/~\/\.claude\/skills/, "hard-coded ~/.claude/skills path (use ${CLAUDE_SKILL_DIR})"],
+  [/\/(Users|home)\/[a-z0-9_.-]+\//i, "absolute home-folder path"],
+];
 const problems = [];
 const fail = (msg) => problems.push(msg);
 
@@ -58,6 +66,7 @@ for (const rel of (plugin && plugin.skills) || []) {
         if (/^[a-z]+:/i.test(target)) continue; // URLs
         if (!existsSync(resolve(dirname(file), target))) fail(`${relative(root, file)}: broken link ${target}`);
       }
+      for (const [re, what] of PRIVATE) if (re.test(text)) fail(`${relative(root, file)}: ${what}`);
     }
     try {
       if (file.endsWith(".mjs") || file.endsWith(".js")) execFileSync(process.execPath, ["--check", file], { stdio: "pipe" });

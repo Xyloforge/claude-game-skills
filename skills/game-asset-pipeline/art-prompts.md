@@ -1,6 +1,6 @@
-# Art prompts for ChatGPT (the way that worked)
+# Art prompts for image models (the way that worked)
 
-The user generates all art in ChatGPT, which makes **one image per message**. Each prompt therefore packs many sprites or frames into one sheet, and the game cuts them apart. This format has worked across many games.
+Image models make **one image per request**, so each prompt packs many sprites or frames into one sheet, and the game cuts them apart. The same prompt works whether the user pastes it into ChatGPT or Claude runs it through an image-generation CLI (see "Generating from the command line" below). This format has worked across many games.
 
 ## Deliver prompts like this
 
@@ -17,14 +17,14 @@ The user generates all art in ChatGPT, which makes **one image per message**. Ea
 
 1. **Style paragraph.** Describe the art style fully in words: medium, outline, shading, palette size, pixel size, lighting, mood, what to avoid ("no anti-aliasing, no blur, no gradients, no painterly brushwork"). Keep this paragraph **identical on every sheet of a game**, so sheets match.
 2. **Background.** "The whole background is flat solid magenta #FF00FF, perfectly even: no shadows, no ground, no texture. Do not use any pink, magenta, purple or violet anywhere in the art. No text, no labels, no grid lines, no borders. No glow around anything."
-3. **Layout, without a fixed size.** **Do not state image pixel dimensions, cell sizes or "fills 80 percent of its cell".** A fixed sheet size makes ChatGPT bend swords, shorten spears, curl tails and squash poses so everything fits (the user caught this on 2026-10-23). Write instead: "Two rows of four, evenly spaced with wide empty magenta gaps between every figure. Draw every figure complete and in its natural proportions: weapons, tails, wings and cloth at full length and never bent, shortened or cropped to fit. If something is long, leave more space around it rather than changing it." Then the facing and pose: "side view, facing RIGHT" (the game mirrors for left). For long weapons or wide poses, put fewer figures on the sheet (one row of four, or 2x2) instead of squeezing. `cut_sheet.py` finds sprites by shape, so the grid does not need equal cells.
+3. **Layout, without a fixed size.** **Do not state image pixel dimensions, cell sizes or "fills 80 percent of its cell".** A fixed sheet size makes the model bend swords, shorten spears, curl tails and squash poses so everything fits. Write instead: "Two rows of four, evenly spaced with wide empty magenta gaps between every figure. Draw every figure complete and in its natural proportions: weapons, tails, wings and cloth at full length and never bent, shortened or cropped to fit. If something is long, leave more space around it rather than changing it." Then the facing and pose: "side view, facing RIGHT" (the game mirrors for left). For long weapons or wide poses, put fewer figures on the sheet (one row of four, or 2x2) instead of squeezing. `cut_sheet.py` finds sprites by shape, so the grid does not need equal cells.
 4. **Items in reading order.** A numbered list. Each item gets a precise visual description: silhouette, colors, distinctive features, size relative to the others.
 
 ## Rules learned the hard way
 
-- **Magenta keying:** no pink, purple or violet in the art, because it keys out with the background. Rarity colors and tints are drawn in code. **Glows over magenta key into a pink halo, so all glows, light, fire and beams are drawn in code.** Ask for flat pale spots on light organs.
+- **Magenta keying:** no pink, purple or violet in the art, because it keys out with the background. Rarity colors and tints are drawn in code. **Glows over magenta key into a pink halo, so glows, light, fire and beams are either drawn in code or painted on their own black-background effect sheet (see Sheet types).** Ask for flat pale spots on light organs.
 - **Reference images (mandatory for a character's second sheet):**
-  - The first sheet of a character is its model sheet. **Every later sheet of the same character must attach it** (ChatGPT: attach the file; Codex CLI: `--image <sheet>.png`) and say "Use the attached image as the exact reference: same person, same outfit, same head-to-body proportions, same art style, same pixel size, same scale." Name the files to attach. Never end a sheet of an existing character with "Do not ask for a reference image": a written description alone drifts, and on Driftborn (2026-10-26) the pose sheet came back with a third-size head, so the chibi lost his big head whenever he sat, begged or ate.
+  - The first sheet of a character is its model sheet. **Every later sheet of the same character must attach it** (ChatGPT: attach the file; Codex CLI: `--image <sheet>.png`) and say "Use the attached image as the exact reference: same person, same outfit, same head-to-body proportions, same art style, same pixel size, same scale." Name the files to attach. Never end a sheet of an existing character with "Do not ask for a reference image": a written description alone drifts (a chibi pose sheet came back with a third-size head, so the character lost its big head whenever it sat or ate).
   - Spell the proportions out in measurable words, not just "chibi": "the head (hair included) is as tall as the whole body below the chin". "2.5 heads tall" alone was read loosely.
   - Prefer walk cycle and poses of one character on **one** sheet when they fit; same-sheet frames match best.
   - After cutting, compare head height across every frame of a character (standing frames should match within about 10 percent). If a sheet drifts, regenerate it with the reference; scaling cannot fix proportions.
@@ -58,9 +58,35 @@ The user generates all art in ChatGPT, which makes **one image per message**. Ea
 
 **Icons.** 8 to 16 per sheet, each in the same frame or none, readable at 16 to 36 px.
 
+**Effects (on black, not magenta).** Slashes, bursts, rings, beams, smoke, notes, sparkles: 8 per sheet on pure flat
+black `#000000`, so glows survive. Cut them by the widest empty gaps and "unmultiply" them (alpha = the brightest
+channel, color divided back out), then draw additive for light (fire, lightning, sound) or with normal blending for
+dark effects. Dark effects (shadow smoke) must be painted with bright edges and highlights, or they vanish against
+black and in game. Ask for perfectly round, centred shapes for rings drawn on the ground.
+
 **Thumbnail cover (always last).** 512x512 composition, full painted scene with no magenta, no text. Show the hero in a signature moment and hint at the story or the best creature. Painted, not a gameplay screenshot.
 
-## After the user delivers
+## Generating from the command line
+
+When Claude makes the art itself (for example with the Codex CLI and its image tool), the same prompts apply, plus:
+
+- **Prompt on standard input, references as flags:** `codex exec --skip-git-repo-check -s workspace-write -i ref.png -i pose_guide.png - < sheet.txt`.
+  A reference flag followed by a positional prompt swallows the prompt, so always pass the prompt on stdin.
+- **Each prompt starts with "Use your image generation tool to create ONE image and save it as <name>.png in the
+  current directory. Do nothing else."** and ends with "This description is complete."
+- **A small runner script** retries a job until the PNG exists (3 to 4 tries with a growing pause) and writes a log
+  per job; run about 4 or 5 jobs in parallel from a job list file (`name ref1.png ref2.png` per line).
+- **Test first:** generate one or two sheets, look at them, then run the batch.
+- **A new character:** first a concept sheet (front, side and back views of every new character, attaching existing
+  characters as the style and scale reference), then crop each character into its own reference image, then every
+  pose sheet with two attachments: that character's reference (identity) and an existing character's pose sheet of
+  the same type (layout and poses only).
+- **Check every sheet before cutting:** identity, scale, every frame complete, no pink in the art, and no detail that
+  swaps sides between frames of a cycle (a hat tip, a charm). Regenerate only the failed sheet, adding one sentence
+  about the problem, and keep the old one for comparison.
+- **Thumbnails:** generate two covers, compare them at 512, 256 and 128 px, and ship the one that still reads small.
+
+## After the art arrives
 
 1. `cut_sheet.py <sheet> <out> --names ... --preview check.png`, then look at the preview.
 2. Export the atlas (`--atlas`, WebP q88 method 6 for painted art; lossless or box-filtered for pixel art), check it at game size on dark and light backgrounds for halos.

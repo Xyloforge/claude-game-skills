@@ -1,25 +1,25 @@
 ---
 name: game-asset-pipeline
-description: How the user makes game art, sound and music, and the tools to process them. ChatGPT sprite-sheet prompts on magenta, a sheet cutter, a Pixabay SFX search and download tool (headless Chrome), SFX processing, Suno music prompts and loop-point finding, the art encoding standard, and a balance-bot pattern. Use whenever a game needs new art, sprite sheets, backdrops, UI kit, thumbnails, sound effects, ambience or music, or when processing or recording assets.
+description: How to get game art, sound and music made and processed, for any game. Sprite-sheet prompts for image models (pasted into ChatGPT by the user, or run by Claude through an image-generation CLI such as Codex), magenta and black-background sheets, a sheet cutter, a Pixabay SFX search and download tool (headless Chrome), SFX processing, music-generator prompts and loop-point finding, the art encoding standard, and a balance-bot pattern. Use whenever a game needs new art, sprite sheets, backdrops, UI kit, thumbnails, sound effects, ambience or music, or when processing or recording assets.
 ---
 
 # Game asset pipeline
 
-This is how the user's games get their art and sound. Pair it with the `game-detail-bar` skill, which defines the quality bar. All tools are in `scripts/` next to this file; call them by their full path, `${CLAUDE_SKILL_DIR}/scripts/...`.
+This is how a game gets its art and sound. Pair it with the `game-detail-bar` skill, which defines the quality bar. All tools are in `scripts/` next to this file; call them by their full path, `${CLAUDE_SKILL_DIR}/scripts/...`.
 
 ## The workflow at a glance
 
 | Asset | Who makes it | Guide | Tool |
 | --- | --- | --- | --- |
-| Sprites, enemies, props, UI kit, backdrops, textures, portraits, thumbnail | The user, in ChatGPT, from prompts Claude writes | [art-prompts.md](art-prompts.md) | `cut_sheet.py` |
+| Sprites, enemies, props, UI kit, effects, backdrops, textures, portraits, thumbnail | An image model, from prompts Claude writes: the user pastes them into ChatGPT, or Claude runs them through an image-generation CLI | [art-prompts.md](art-prompts.md) | `cut_sheet.py` |
 | Encoding and recording art | Claude | [art-standard.md](art-standard.md) | `cut_sheet.py --atlas` |
 | Sound effects and ambience | Claude, from Pixabay | [sfx-guide.md](sfx-guide.md) | `pixabay_sfx.mjs`, `process_sfx.py` |
-| Music | The user, in Suno, from prompts Claude writes | [music-guide.md](music-guide.md) | `find_loop.py` |
+| Music | The user, in a music generator such as Suno, from prompts Claude writes | [music-guide.md](music-guide.md) | `find_loop.py` |
 | Balance numbers | Claude | [balance-bots.md](balance-bots.md) | your own sim, from the pattern |
 
 ## Rules that apply to every asset
 
-1. **Write prompts and lists before asking the user to generate anything.** Put them in one file, `~/Downloads/<game>-<topic>-prompts.md`, never in the repo until the user picks. One prompt per ChatGPT or Suno message.
+1. **Write prompts and lists before generating anything.** Put them in one file, `~/Downloads/<game>-<topic>-prompts.md`, never in the repo until the user picks. One prompt per ChatGPT or Suno message. When Claude generates the art itself, make a few test sprites first for the user to check before running the whole batch.
 2. **Every feature gets its assets in the same turn**, including the small ones: each UI and HUD action gets its own sound and its own animation (see the sfx guide's UI list). Never ship a placeholder beep, a shared "generic click" for everything, or a static panel that just appears.
 3. **Sound must be as realistic as possible:** real recorded foley from Pixabay (avoid items marked AI-generated), layered and processed. Synth tones only as a fallback while the file loads.
 4. **Music prompts describe the game, not the instruments:** what the player is doing, the vibe and theme, fast or slow, the bpm, "instrumental, seamless loop".

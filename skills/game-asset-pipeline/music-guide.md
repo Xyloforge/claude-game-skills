@@ -1,10 +1,10 @@
 # Music guide (Suno)
 
-The user makes the music in Suno from prompts Claude writes. Claude then sets the loop and the mix.
+The user makes the music in a generator such as Suno from prompts Claude writes. Claude then sets the loop and the mix.
 
 ## Writing the prompt
 
-**Never list instruments.** The user rejected an instrument list ("just define the vibe and bpm and what we doing, what's it for"). Suno chooses the instruments.
+**Never list instruments.** Instrument lists were rejected ("just define the vibe and bpm and what we're doing, what it's for"). The generator chooses the instruments.
 
 Describe only:
 1. **What the game is and what the player is doing** at that moment (exploring a burning village, fighting a boss in a cathedral, fishing on a calm morning pier, a shop between tides).
@@ -29,7 +29,7 @@ Give one prompt per track: each stage, each boss, night and day variants, menus,
 Suno songs are full songs with an intro and an outro, so looping the whole file cuts badly at the end. Loop a section the song itself repeats:
 
 ```sh
-python3 ~/.claude/skills/game-asset-pipeline/scripts/find_loop.py "<song>.mp3" --preview seam.wav
+python3 ${CLAUDE_SKILL_DIR}/scripts/find_loop.py "<song>.mp3" --preview seam.wav
 ```
 
 - It lists the three most likely repeat periods with the loop body for each. The top pick is not always the full section; a long verse can score a shorter phrase first.

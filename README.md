@@ -10,12 +10,29 @@ performance on real phones.
 Each rule in these skills is something an AI left out of a game and a person had to ask for. Loaded into Claude
 Code, they make those things part of the first build.
 
+**General by design.** The skills are for any game, not one game: no rule names or points into a particular title,
+its code, its characters or its files. Rules that hold for every game live in each skill's `SKILL.md`; rules that only
+make sense for one kind of game live in a genre guide that Claude reads when the game fits.
+
 ## What's inside
 
 | Skill | What it does | Use it when |
 | --- | --- | --- |
-| [`game-detail-bar`](skills/game-detail-bar/SKILL.md) | The quality bar for any game: camera, hit feel, SFX and music, animation, unique enemies, bosses and items, non-repetitive stages, scoring and balance, bot tests, art, UI and HUD motion, input and mobile, saves, and **performance** (the coding patterns that make canvas games slow on phones and what to write instead). Ends with a done checklist. | Pitching, speccing, building, reviewing or reporting on a game or a game feature. |
-| [`game-asset-pipeline`](skills/game-asset-pipeline/SKILL.md) | How to get art, sound and music made and processed: sprite-sheet prompt format for image models, a sheet cutter, a Pixabay SFX search and download tool, SFX loudness processing, music prompts and loop-point finding, an art encoding standard and a balance-bot pattern. | A game needs sprites, backdrops, UI art, sound effects, ambience or music. |
+| [`game-detail-bar`](skills/game-detail-bar/SKILL.md) | The quality bar for any game: camera, feedback on every action, SFX and music, animation, content and characters that each play differently, scoring and balance, bot tests, art, **UI layout that never spills out of its frames**, UI motion, input and mobile, saves, **performance** (the coding patterns that make canvas games slow on phones and what to write instead) and working method. Plus genre guides (below). Ends with a done checklist. | Pitching, speccing, building, reviewing or reporting on a game or a game feature. |
+| [`game-asset-pipeline`](skills/game-asset-pipeline/SKILL.md) | How to get art, sound and music made and processed: sprite-sheet prompt format for image models (pasted by hand or generated from the command line), effect sheets, a sheet cutter, a Pixabay SFX search and download tool, SFX loudness processing, music prompts and loop-point finding, an art encoding standard and a balance-bot pattern. | A game needs sprites, effects, backdrops, UI art, sound effects, ambience or music. |
+
+### Genre guides (inside `game-detail-bar`)
+
+| Guide | For games with |
+| --- | --- |
+| [action combat](skills/game-detail-bar/genres/action-combat.md) | Real-time fighting: hit feel, telegraphs, ability kits, enemies, bosses, combat bots |
+| [side-view platforming](skills/game-detail-bar/genres/platformer-side-view.md) | Jumping and levels seen from the side: vertical camera, movement feel, level design |
+| [run-based roguelites](skills/game-detail-bar/genres/roguelite-runs.md) | Runs of rooms or floors: rooms with identity, rewards and builds, meta progress |
+| [sims and economies](skills/game-detail-bar/genres/sim-economy.md) | Money or resource loops: goals, fairness, upgrades, collections, balance simulation |
+| [real-time multiplayer](skills/game-detail-bar/genres/multiplayer-realtime.md) | Live online play: choosing a netcode model, each player owning their character, smooth snapshots, testing with lag |
+
+A game can use several guides at once. Genres without a guide (puzzle, racing, cards, rhythm, turn-based, strategy)
+still get every core rule; a guide is added only after shipping that kind of game, from what was learned.
 
 Both skills load on their own when Claude Code sees a matching task. You can also call them directly as
 `/game-skills:game-detail-bar` and `/game-skills:game-asset-pipeline`.
@@ -80,15 +97,18 @@ per-frame blur, save/restore per sprite, no culling, O(n²) collision and more) 
   plugin.json          plugin manifest (skills list)
   marketplace.json     marketplace manifest (one plugin, this repo)
 skills/
-  game-detail-bar/     SKILL.md, reference.md, scripts/phone_perf.mjs
+  game-detail-bar/     SKILL.md (core rules), reference.md, genres/*.md (genre guides), scripts/phone_perf.mjs
   game-asset-pipeline/ SKILL.md, guides, scripts/
 tools/validate.mjs     repository checks run in CI
 ```
 
 ## Contributing
 
-Issues and pull requests are welcome. Keep rules general (no pointers into a particular game's code), concrete
-(numbers, not adjectives) and written for Claude to act on. Run the checks before opening a pull request:
+Issues and pull requests are welcome. Keep rules general (no game titles, characters, files or code paths from a
+particular game), concrete (numbers, not adjectives) and written for Claude to act on. A rule that holds for every
+game goes in `SKILL.md`; a rule for one kind of game goes in the matching genre guide (or a new guide, once there is
+real experience behind it). `tools/validate.mjs` also rejects private note links, `~/.claude/skills` paths and home
+folders. Run the checks before opening a pull request:
 
 ```sh
 node tools/validate.mjs

@@ -1,6 +1,6 @@
 # Sound effects guide
 
-**The more realistic, the better.** Real recorded foley from Pixabay, layered, trimmed and mixed. The user rejects synth beeps, placeholder sounds, and one sample reused for unrelated actions.
+**The more realistic, the better.** Real recorded foley from Pixabay, layered, trimmed and mixed. Synth beeps, placeholder sounds and one sample reused for unrelated actions read as unfinished.
 
 ## Everything gets a sound, including the UI and HUD
 
@@ -23,8 +23,8 @@ Every UI sound pairs with an animation of the same moment: a button pressing in,
 Use the tool. It drives a real headless Chrome, which is the only thing that gets past Pixabay's bot protection:
 
 ```sh
-node ~/.claude/skills/game-asset-pipeline/scripts/pixabay_sfx.mjs search <raw-dir> "sword clash" "armor impact" "wood ui click"
-node ~/.claude/skills/game-asset-pipeline/scripts/pixabay_sfx.mjs get <raw-dir> clang1=241729 clang2=393837
+node ${CLAUDE_SKILL_DIR}/scripts/pixabay_sfx.mjs search <raw-dir> "sword clash" "armor impact" "wood ui click"
+node ${CLAUDE_SKILL_DIR}/scripts/pixabay_sfx.mjs get <raw-dir> clang1=241729 clang2=393837
 ```
 
 - `search` saves the results and prints id, length, title and author, and flags AI-generated items. **Avoid AI-generated items.**
@@ -44,7 +44,7 @@ Never solve CAPTCHAs or guess CDN URLs. If a search returns a verification page,
 ## Processing
 
 ```sh
-python3 ~/.claude/skills/game-asset-pipeline/scripts/process_sfx.py <raw-dir> <game>/audio spec.json
+python3 ${CLAUDE_SKILL_DIR}/scripts/process_sfx.py <raw-dir> <game>/audio spec.json
 ```
 
 Per sound in `spec.json`: `max` seconds kept, `fade` out, `peak` dBFS (impacts -1 to -2, swings -3, UI -4 to -6, loops and ambience -6 to -8), optional `start`, `lowpass` / `highpass`, `loop`. Defaults: lead silence trimmed below -50 dBFS, mono 44.1 kHz, MP3 64 kb/s (long ambience 40 to 96 kb/s). It prints the byte table for AUDIO.md.

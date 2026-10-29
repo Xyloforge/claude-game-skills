@@ -11,7 +11,7 @@
     {
       "name": "game-skills",
       "source": "./",
-      "description": "A quality bar and an asset pipeline for building web games with Claude Code: game feel, camera, sound, animation, enemy and level variety, balance bots, UI, mobile, and phone performance.",
+      "description": "A quality bar and an asset pipeline for building any web game with Claude Code: game feel, camera, sound, animation, content variety, balance bots, UI layout and motion, mobile and phone performance, plus genre guides for action combat, platforming, roguelites, sims and real-time multiplayer.",
       "author": { "name": "Xyloforge" },
       "category": "development",
       "keywords": ["games", "game-dev", "canvas", "html5", "performance", "game-feel"]

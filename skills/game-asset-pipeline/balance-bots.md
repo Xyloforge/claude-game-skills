@@ -1,6 +1,6 @@
 # Balance with bots
 
-Tune by simulation, then confirm with one real play-test number. Two patterns from the user's games:
+Tune by simulation, then confirm with one real play-test number. Two patterns that worked in shipped games:
 
 ## 1. Economy and season sim
 - Load the game's **real rule files** into a Node `vm` sandbox, so the sim runs the same code as the game, not a copy.
