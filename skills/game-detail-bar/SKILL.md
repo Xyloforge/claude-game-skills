@@ -203,6 +203,10 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   and no text; check them at 128 px.
 - **Load smart:** an area's art loads behind a loading screen and is decoded before first draw; later areas load in
   the background once unlocked.
+- **Every frame name exists.** A missing frame usually draws nothing and raises no error, so a character blinks out
+  on one step of a cycle or vanishes in one pose. Check every frame name used in code and data against the sheets as
+  part of the build, and in play log one warning per unknown name instead of failing silently. Never reference a
+  frame that has not been drawn yet; reuse an existing one until it is.
 
 ## 9. UI and HUD
 
@@ -220,6 +224,8 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
 - **Explain before the player commits:** standing at a shop item or a reward shows what it does, what it costs and
   what it replaces.
 - **Prompts follow the bindings:** keycaps and tips show the bound key or pad button and switch when a pad is used.
+  On touch, no keyboard keys anywhere: prompts drop their keycap and any key-based text ("press K again") gets touch
+  wording ("tap the spell button again").
   A full key strip on title and pause screens; keep the bottom edge clear in play.
 - **Cards and toasts never block play:** a big card closes on the first press without firing an action; small toasts
   let input through; queued reveals wait their turn and pause their timers in menus.
@@ -291,8 +297,14 @@ exit motion, and each motion pairs with its sound (section 3).
   events). Every key rebindable, bindings stored in localStorage.
 - **Phones:** a thumb stick or pads plus buttons on the other side, each finger tracked on its own; buttons that
   change role in context; touch slop on small buttons; swipeable pages.
+- **Touch buttons carry the state the desktop bar showed** (cooldown sweep, charges, meter rings, a recast glow), and
+  the desktop slot bar hides: it duplicates the buttons and sits under a thumb. Context buttons (use, talk, open)
+  appear and glow only when something is in reach. An on-screen pause button, with the other corner HUD stepping
+  aside for it. Any physical key switches to keyboard mode and any touch switches back.
 - **First tap enters fullscreen and locks landscape** where allowed (or portrait, if that is the game's shape); the
-  wrong orientation shows a "turn your phone" card and pauses. Respect notch safe areas.
+  wrong orientation shows a "turn your phone" card and pauses (an online host keeps running for its guests). Respect
+  notch safe areas. Fullscreen comes back on the next tap after the player swipes out, with a Fullscreen On/Off
+  setting in pause (on by default for phones), hidden where the browser has no element fullscreen.
 - **The scene fills every aspect ratio** (16:10, ultrawide, tall phones) with no bars or empty edges.
 - **Smoothness:** step by real frame time in sub-steps of at most 1/60 s (no judder at 90, 120 or 144 Hz), and
   everything in section 12.
@@ -327,7 +339,7 @@ objects*.
 | Text with outlines redrawn every frame for static labels | `strokeText` with thick round joins is costly | Cache static labels into canvases; only redraw text that changes |
 | Every object checking every other object (collision, separation, targeting) | O(n²): 300 objects is 45,000 pair checks | Spatial grid or hash, rebuilt once a frame; query only nearby cells |
 | Allocating closures, arrays or objects per object per frame in hot paths | Garbage-collector pauses show as stutter | Reuse arrays, inline hot loops, avoid callbacks in the innermost query |
-| Big sprite sheets uploaded on first use | The first swarm or first boss hitches while the GPU uploads | Draw one pixel of each sheet (and any silhouette or tint copy) on the first ready frame |
+| One-time work done the first time it is needed (decoding art, building caches or tinted copies, compiling shaders, decoding sounds, loading fonts, filling pools) | The first hit, effect, enemy type, boss or area hitches mid-play, often for 100 ms or more | Do it ahead, behind a loading screen, a menu or a transition, and check the warm-up really did the work: a token warm-up (a tiny draw, a muted play) can look done while the real cost still waits |
 | Many sounds started per frame | Audio thread overload, crackle and stutter | A voice limit and a per-sound rate limit |
 
 For 3D (Three.js): too many draw calls (use instancing or merged geometry), shadows on everything (shadow-cast only
@@ -349,8 +361,12 @@ world with flat billboard grass, trees or shrubs.
   - game-logic milliseconds with 0, 150 and 300 objects.
   `node ${CLAUDE_SKILL_DIR}/scripts/phone_perf.mjs <url> --setup "<js to reach the worst scene>" --off "<js to switch a layer off>"`
   does the frame-time, layer and call-count part for any page.
+- **Find stutter, not only slowness:** report the 99th percentile and the worst frame, not just the median; a smooth
+  median with one 150 ms frame still feels broken. Time every game function and keep the top few for each frame over
+  about 35 ms, so a spike names its cause. Measure from a fresh page load and watch every "first" (first hit, first
+  status effect, first enemy type, first boss, first new area): one-time costs never show on a warmed-up run.
 - **Targets on the simulated phone:** median frame at or near 16.7 ms in the worst case, no frames over 50 ms while
-  scrolling onto new ground, game logic under about 2 ms for 300 objects, and fewer than about 500 `save`/`restore`
+  scrolling onto new ground or meeting anything for the first time, game logic under about 2 ms for 300 objects, and fewer than about 500 `save`/`restore`
   pairs per frame.
 
 ## 13. Working method
@@ -376,7 +392,7 @@ world with flat billboard grass, trees or shrubs.
 - [ ] Every new action has its own recorded SFX (list new vs reused), with variation and a voice limit; ambience and
       music loop cleanly; music ducks and pauses.
 - [ ] Every state has a pose; main actions have several frames; cycles have no side-flipping details; the world
-      idles.
+      idles; every frame name used in code and data exists in the art.
 - [ ] Every option, character, opponent and item has its own verb, job or rule and a hook; each area changes the
       rules; stand-ins are listed.
 - [ ] Scoring rewards skill; a bot simulation supports the balance numbers; nothing takes earned progress.
@@ -385,9 +401,10 @@ world with flat billboard grass, trees or shrubs.
       their frames; layouts survive the content count; HUD regions never stack; stale HUD clears; screenshots at
       desktop and phone sizes checked.
 - [ ] Every HUD and UI element animates on enter, change, idle and exit, each with its own sound.
-- [ ] Touch, pad and rebindable keys, nothing needs a held mouse button; fullscreen and rotate card; safe areas;
-      fills every aspect ratio.
+- [ ] Touch, pad and rebindable keys, nothing needs a held mouse button; no keyboard keys shown on touch; touch
+      buttons show cooldowns and charges; on-screen pause; fullscreen (re-entered, with a setting) and rotate card;
+      safe areas; fills every aspect ratio.
 - [ ] Performance measured on a simulated phone (section 12): the worst case and every animated menu hold 60 fps or
-      close, and none of the slow patterns are in the code.
+      close, the worst frame from a fresh load is reported, and none of the slow patterns are in the code.
 - [ ] `SPEC.md`, `ART.md` and `AUDIO.md` updated with the real numbers.
 - [ ] The checklist of every genre guide used.

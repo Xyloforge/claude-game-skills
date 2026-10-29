@@ -4,6 +4,12 @@ The plugin tracks commits on `main`; notable changes are listed here by date.
 
 ## 2026-10-29
 
+- `game-detail-bar` core rules: every frame name must exist (a missing frame silently draws nothing); first-time
+  costs (decoding art, building caches or tinted copies, shaders, sounds, fonts, pools) happen behind a loading
+  screen, menu or transition, replacing the old "draw one pixel of each sheet" advice; stutter is measured by the
+  worst and 99th-percentile frames from a fresh load, with each long frame naming its cause; touch shows no keyboard
+  keys, touch buttons carry cooldowns and charges, an on-screen pause; fullscreen comes back after a swipe out, with a
+  setting. Done checklist updated to match.
 - `game-detail-bar` split into **core rules for every game** (`SKILL.md`) and **genre guides** (`genres/`): action
   combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer. Combat, platforming
   and economy rules that only fit one kind of game moved out of the core into their guides.
