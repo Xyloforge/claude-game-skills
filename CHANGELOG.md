@@ -2,6 +2,13 @@
 
 The plugin tracks commits on `main`; notable changes are listed here by date.
 
+## 2026-10-30
+
+- `game-detail-bar` core rules: smooth animation comes from frames that agree with each other (check each cycle side
+  by side on its anchor, regenerate frames that jump), 8 to 12 frames a second with per-frame movement and
+  in-between frames for state changes; decoded art memory budget (width × height × 4), with per-level loading only
+  above about 150 MB.
+
 ## 2026-10-29
 
 - `game-detail-bar` core rules: every frame name must exist (a missing frame silently draws nothing); first-time

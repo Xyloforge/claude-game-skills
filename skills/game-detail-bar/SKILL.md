@@ -133,6 +133,12 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   under characters.
 - **Painted frames must agree with each other:** a detail that flips sides between frames of a cycle (a hat tip, a
   scarf end, a charm) flickers in motion. Check every cycle for it and regenerate or drop those frames.
+- **Smooth comes from consistent frames, not more frames:** frames generated one at a time drift in proportions,
+  outline, face and limb length, and large painted sprites show every drift as jitter. Lay each cycle out side by
+  side on its foot anchor (and play it in a loop) before using it; regenerate any frame whose silhouette or size
+  jumps from its neighbours. About 8 to 12 frames a second is enough when the frames agree, the position moves
+  every display frame, and every state change (land, get up, turn, dash) has its own in-between frames instead of a
+  snap.
 
 ## 5. Content that never repeats
 
@@ -340,6 +346,7 @@ objects*.
 | Every object checking every other object (collision, separation, targeting) | O(n²): 300 objects is 45,000 pair checks | Spatial grid or hash, rebuilt once a frame; query only nearby cells |
 | Allocating closures, arrays or objects per object per frame in hot paths | Garbage-collector pauses show as stutter | Reuse arrays, inline hot loops, avoid callbacks in the innermost query |
 | One-time work done the first time it is needed (decoding art, building caches or tinted copies, compiling shaders, decoding sounds, loading fonts, filling pools) | The first hit, effect, enemy type, boss or area hitches mid-play, often for 100 ms or more | Do it ahead, behind a loading screen, a menu or a transition, and check the warm-up really did the work: a token warm-up (a tiny draw, a muted play) can look done while the real cost still waits |
+| Too much decoded art held at once | A decoded image costs width × height × 4 bytes whatever its file size (a 2048 × 2048 atlas is 16 MB); phone browsers reload or kill the tab at roughly 200 to 300 MB | Add up the decoded size of every atlas; under about 150 MB load it all up front; above that, load per level or area, prefetch the next one behind play, and release the rest |
 | Many sounds started per frame | Audio thread overload, crackle and stutter | A voice limit and a per-sound rate limit |
 
 For 3D (Three.js): too many draw calls (use instancing or merged geometry), shadows on everything (shadow-cast only
