@@ -19,7 +19,7 @@ make sense for one kind of game live in a genre guide that Claude reads when the
 | Skill | What it does | Use it when |
 | --- | --- | --- |
 | [`game-detail-bar`](skills/game-detail-bar/SKILL.md) | The quality bar for any game: camera, feedback on every action, SFX and music, animation, content and characters that each play differently, scoring and balance, bot tests, art, **UI layout that never spills out of its frames**, UI motion, input and mobile, saves, **performance** (the coding patterns that make canvas games slow on phones and what to write instead) and working method. Plus genre guides (below). Ends with a done checklist. | Pitching, speccing, building, reviewing or reporting on a game or a game feature. |
-| [`game-asset-pipeline`](skills/game-asset-pipeline/SKILL.md) | How to get art, sound and music made and processed: sprite-sheet prompt format for image models (pasted by hand or generated from the command line), effect sheets, a sheet cutter, a Pixabay SFX search and download tool, SFX loudness processing, music prompts and loop-point finding, an art encoding standard and a balance-bot pattern. | A game needs sprites, effects, backdrops, UI art, sound effects, ambience or music. |
+| [`game-asset-pipeline`](skills/game-asset-pipeline/SKILL.md) | How to get art, sound and music made and processed: sprite-sheet prompt format for image models (pasted by hand or generated from the command line), effect sheets, a sheet cutter, UI frames decorated anywhere that still resize, a Pixabay SFX search and download tool, SFX loudness processing, music prompts and loop-point finding, an art encoding standard and a balance-bot pattern. | A game needs sprites, effects, backdrops, UI art, sound effects, ambience or music. |
 
 ### Genre guides (inside `game-detail-bar`)
 
@@ -73,6 +73,7 @@ The skills themselves are plain Markdown and need nothing. The scripts they call
 | `game-detail-bar/scripts/phone_perf.mjs` (frame time and canvas calls on a simulated phone) | Node 18+, Playwright (`npm i -g playwright`) |
 | `game-asset-pipeline/scripts/pixabay_sfx.mjs` | Node 18+, Playwright, Google Chrome |
 | `cut_sheet.py` | Python 3, Pillow, NumPy, SciPy |
+| `slice_frame.py` (resizable UI frames) | Python 3, Pillow, NumPy |
 | `process_sfx.py`, `find_loop.py` | Python 3, NumPy, ffmpeg |
 
 ## Measuring performance on a phone

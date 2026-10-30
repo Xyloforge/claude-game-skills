@@ -4,6 +4,12 @@ The plugin tracks commits on `main`; notable changes are listed here by date.
 
 ## 2026-10-30
 
+- `game-asset-pipeline`: new **UI frames** guide and `slice_frame.py`. Frames can be decorated anywhere, not only in
+  the corners: the tool finds corners, ornaments along each edge (by shape and by colour) and repeating edge
+  patterns, and writes a layout where ornaments keep their size and only the plain spans between them grow (tiled
+  when patterned). Includes the UI kit prompt wording, a canvas `drawFrame` that matches the tool's preview, the CSS
+  `border-image` case, and when to use overlays or a fixed image instead. `game-detail-bar` UI layout rule updated
+  to match.
 - `game-detail-bar` core rules: smooth animation comes from frames that agree with each other (check each cycle side
   by side on its anchor, regenerate frames that jump), 8 to 12 frames a second with per-frame movement and
   in-between frames for state changes; decoded art memory budget (width × height × 4), with per-level loading only

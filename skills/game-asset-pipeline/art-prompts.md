@@ -54,7 +54,7 @@ Image models make **one image per request**, so each prompt packs many sprites o
 
 **Tileable textures.** Square, "seamless tileable texture, top-down, evenly lit, no shadows from objects, no vignette".
 
-**UI kit.** One magenta sheet of HUD pieces in the game's style: bar frames with **empty insides** (the game fills them), panel corners for 9-slicing, buttons (normal and pressed), icon frames, a rank or medal frame, a banner, a keycap. No text on anything.
+**UI kit.** One magenta sheet of HUD pieces in the game's style: bar frames with **empty insides** (the game fills them), whole panel frames, buttons (normal and pressed), icon frames, a rank or medal frame, a banner, a keycap. No text on anything. Frames may be decorated anywhere, as long as each ornament is a separate shape with plain frame on both sides; [ui-frames.md](ui-frames.md) has the wording and how the game resizes them.
 
 **Icons.** 8 to 16 per sheet, each in the same frame or none, readable at 16 to 36 px.
 

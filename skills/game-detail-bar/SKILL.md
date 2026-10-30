@@ -247,9 +247,11 @@ point out. Build these in from the start and prove them with screenshots.
   (measured from the art, scaled with the UI) and returns the safe inner rectangle. Titles, text, grids and buttons
   are laid out inside it, never at the frame edge and never on the rim. Footer buttons sit at a fixed offset inside
   the bottom border.
-- **9-slice only stretches what can stretch.** Corners keep their size, edges stretch along one axis, the center
-  fills. Corner ornaments must never be stretched down a side. When a panel is smaller than two corners, scale the
-  corners down evenly instead of overlapping them.
+- **Framed panels resize without smearing their art.** Corners and every ornament along an edge (a gem, a crest, a
+  spike) keep their size; only the plain parts between them grow, patterned edges repeat instead of stretching, and
+  the center fills. Decoration can sit anywhere on the frame. A panel smaller than its corners scales down evenly
+  instead of overlapping them. UI that never resizes (a title frame) can be one fixed image; ornaments that animate
+  are separate sprites placed on the frame.
 - **Bar fills draw inside the frame's window, on top.** If the frame art has a solid middle, a fill drawn under it
   is invisible (a bar that "looks empty" is usually this). Measure the inner window of the frame art once and fill
   that rectangle, or cut the window out of the art. Check each bar at 0%, 50% and 100%.
