@@ -1,6 +1,6 @@
 ---
 name: game-detail-bar
-description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, input and mobile, saves, performance and working method. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
+description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, input and mobile, saves, performance and working method. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
 ---
 
 # Game detail bar
@@ -37,6 +37,7 @@ thing ("a heavy enemy", "a fishing loop"), never a specific title.
 | [genres/roguelite-runs.md](genres/roguelite-runs.md) | Runs built from rooms, floors or waves, random rewards, builds, and progress kept between runs |
 | [genres/sim-economy.md](genres/sim-economy.md) | A money or resource loop: days or seasons, shops, upgrades, orders, customers, quotas |
 | [genres/multiplayer-realtime.md](genres/multiplayer-realtime.md) | Two or more players in one live game over a network, co-op or versus |
+| [genres/open-world.md](genres/open-world.md) | One large continuous world the player roams freely, far bigger than the screen |
 
 There is no guide yet for puzzle, racing, card, rhythm, turn-based or strategy games; the rules in this file still
 apply to them. Add a guide only after shipping that kind of game, from what was actually learned. Never invent one.
@@ -351,6 +352,17 @@ objects*.
 | Too much decoded art held at once | A decoded image costs width × height × 4 bytes whatever its file size (a 2048 × 2048 atlas is 16 MB); phone browsers reload or kill the tab at roughly 200 to 300 MB | Add up the decoded size of every atlas; under about 150 MB load it all up front; above that, load per level or area, prefetch the next one behind play, and release the rest |
 | Many sounds started per frame | Audio thread overload, crackle and stutter | A voice limit and a per-sound rate limit |
 
+### Loading (the first screen shows fast)
+
+- **Menu first, game after.** The page loads only what the title screen or menu needs (its code, UI art, fonts,
+  menu music). The game's code and art load behind the menu while the player reads it, and anything still missing
+  loads behind a short loading screen when they press play. A player should see a working menu within a second or
+  two on a phone, never a blank page while the whole game downloads.
+- **One packed data file.** All game data (levels, items, enemies, abilities, dialogue, balance numbers) ships as one
+  file per game, not dozens of small JSON fetches: one request, compressed by the server, parsed once at load. Put a
+  version in its URL so it can be cached for a long time and an update is picked up at once. Art stays in atlases
+  for the same reason.
+
 For 3D (Three.js): too many draw calls (use instancing or merged geometry), shadows on everything (shadow-cast only
 key objects, small shadow maps), full device pixel ratio, uncapped particles, and per-frame geometry or material
 creation. The same "cache what does not change, cap and cull the rest" rule applies. In 3D scenes, never fill the
@@ -415,5 +427,6 @@ world with flat billboard grass, trees or shrubs.
       safe areas; fills every aspect ratio.
 - [ ] Performance measured on a simulated phone (section 12): the worst case and every animated menu hold 60 fps or
       close, the worst frame from a fresh load is reported, and none of the slow patterns are in the code.
+- [ ] The menu shows before the game code and art finish loading; game data ships as one versioned packed file.
 - [ ] `SPEC.md`, `ART.md` and `AUDIO.md` updated with the real numbers.
 - [ ] The checklist of every genre guide used.

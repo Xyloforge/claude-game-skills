@@ -68,6 +68,12 @@ that player skips it and draws its own live copy in its place, at the same depth
   Only cosmetic events that are already stale (a sound or shake more than about 350 ms old) are skipped.
 - **Measure bytes per snapshot** in a busy moment and keep it reasonable (a few KB at 30 a second is fine; tens of KB
   is not).
+- **Send frequent messages as binary, not JSON.** Snapshots, inputs and positions go out many times a second; JSON
+  repeats every field name in every message and costs parse time on each one. Pack them into an `ArrayBuffer` with a
+  fixed layout (a message-type byte, then numbers as small integers or floats: a position as two 16-bit values in
+  world units, an angle as one byte, ids as small integers) and set the socket's `binaryType` to `"arraybuffer"`.
+  Rare messages (joining, chat, end of match) can stay JSON. Keep the layout in one shared file used by both
+  sides, and change it only with a protocol version bump.
 
 ## 4. Feedback goes to the right player
 
@@ -151,6 +157,7 @@ that player skips it and draws its own live copy in its place, at the same depth
 - [ ] Health is the host's; dodges on the owner's screen count; takeovers only when held or downed; move counters on
       level changes.
 - [ ] Interpolation with an adaptive buffer; late snapshots extrapolate; events never dropped.
+- [ ] Frequent messages (snapshots, inputs) are binary with one shared layout; bytes per snapshot reported.
 - [ ] Personal feedback goes to its player only; no echoes.
 - [ ] Protocol versioned; relay checks size, rate and senders; reconnection; hidden host tab keeps ticking.
 - [ ] Tested with two or more browsers, a lag simulator and a throttled guest, with the numbers reported.

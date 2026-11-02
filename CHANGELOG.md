@@ -2,6 +2,16 @@
 
 The plugin tracks commits on `main`; notable changes are listed here by date.
 
+## 2026-11-02
+
+- `game-detail-bar`: new **open worlds** genre guide: the world split into chunks that own their contents, chunk
+  culling against the view and a view distance, streaming chunks in ahead and freeing them behind, and instanced
+  drawing of repeated objects per chunk.
+- `game-detail-bar` real-time multiplayer guide: frequent messages (snapshots, inputs) are sent as binary with one
+  shared layout instead of JSON.
+- `game-detail-bar` core rules: a new loading part in performance: the menu shows first while the game loads behind
+  it, and game data ships as one versioned packed file instead of many small fetches. Done checklist updated.
+
 ## 2026-10-30
 
 - `game-asset-pipeline`: new **UI frames** guide and `slice_frame.py`. Frames can be decorated anywhere, not only in

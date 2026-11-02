@@ -29,7 +29,8 @@ make sense for one kind of game live in a genre guide that Claude reads when the
 | [side-view platforming](skills/game-detail-bar/genres/platformer-side-view.md) | Jumping and levels seen from the side: vertical camera, movement feel, level design |
 | [run-based roguelites](skills/game-detail-bar/genres/roguelite-runs.md) | Runs of rooms or floors: rooms with identity, rewards and builds, meta progress |
 | [sims and economies](skills/game-detail-bar/genres/sim-economy.md) | Money or resource loops: goals, fairness, upgrades, collections, balance simulation |
-| [real-time multiplayer](skills/game-detail-bar/genres/multiplayer-realtime.md) | Live online play: choosing a netcode model, each player owning their character, smooth snapshots, testing with lag |
+| [real-time multiplayer](skills/game-detail-bar/genres/multiplayer-realtime.md) | Live online play: choosing a netcode model, each player owning their character, smooth snapshots, binary messages, testing with lag |
+| [open worlds](skills/game-detail-bar/genres/open-world.md) | One large world to roam: chunks, chunk culling, streaming chunks in and out, instanced drawing |
 
 A game can use several guides at once. Genres without a guide (puzzle, racing, cards, rhythm, turn-based, strategy)
 still get every core rule; a guide is added only after shipping that kind of game, from what was learned.
