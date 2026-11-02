@@ -1,13 +1,17 @@
 # Art encoding and acceptance standard
 
-An art encoding standard for any web game.
+An art encoding standard for any game. Web games ship encoded image files (the formats below) and pay for every
+byte downloaded. Engine builds (Godot, Unity) import lossless masters (PNG) and let the engine compress textures for
+each platform: Godot "VRAM Compressed" for painted art and "Lossless" for pixel art; Unity's per-platform texture
+compression (ASTC or ETC2 on phones) and Point filtering for pixel art. Memory, detail level and loading rules apply
+everywhere; download budgets apply to web games.
 
 ## Source and runtime files
 - Keep the original master outside the game folder, and record where it is and how it was made (tool and prompt file). Ship only art the game uses.
 - A loading screen, ZIP or HTTP compression is not image optimization. Measure the encoded files.
 
 ## Format and encoding
-| Art | Start with | Check |
+| Art | Start with (web) | Check |
 | --- | --- | --- |
 | Painted characters and scenery | Lossy WebP q84 to 90, method 6, alpha kept | detail, silhouette, color at real size and the largest view |
 | Pixel art, fine lines | Lossless WebP or PNG; downscale with a premultiplied box filter, then hard alpha | hard edges kept, no blur or color bleed; never upscale tiny art into mush |
@@ -19,12 +23,16 @@ An art encoding standard for any web game.
 - Transfer size is not memory: a W × H RGBA image takes about W × H × 4 bytes decoded.
 
 ## Budgets (defaults; record exceptions with the reason)
-- One image: 512 KiB. All raster art per game: 1 MiB. Thumbnail: 400 KiB, 512 × 512.
+- Web games: one image 512 KiB; all raster art for a small game about 1 MiB. Engine builds: decoded texture memory
+  (W × H × 4, or the compressed size the engine reports) within the memory budget in the `game-detail-bar`
+  performance rules.
+- Cover and store art at each store's required sizes and limits (a portal tile, an itch.io cover, Steam capsules, a
+  phone store icon).
 - Larger games exceed this on purpose. Load per stage behind a loading screen, and record the measured bytes and why in ART.md. Never shrink art until it is unreadable.
 - Report original and final bytes and the reduction percentage.
 
 ## Loading and recovery
-- Gate play on download **and decode** of required art. Upload sprite sheets during loading screens to avoid a first-draw hitch.
+- Gate play on download (web) **and decode** of required art. Upload sprite sheets to the GPU during loading screens to avoid a first-draw hitch.
 - Finite deadlines (30 s per request, 5 s per decode), retry, and a playable fallback or an honest error. Lock input while loading.
 - Use determinate progress only when totals are known. Ignore stale callbacks after a retry.
 

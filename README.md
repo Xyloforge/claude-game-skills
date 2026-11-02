@@ -3,8 +3,8 @@
 [![validate](https://github.com/Xyloforge/claude-game-skills/actions/workflows/validate.yml/badge.svg)](https://github.com/Xyloforge/claude-game-skills/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Skills for [Claude Code](https://code.claude.com) that make it build web games to a finished standard instead of a
-working prototype: game feel, camera, sound, animation, enemy and level variety, balance testing, UI, mobile and
+Skills for [Claude Code](https://code.claude.com) that make it build games to a finished standard instead of a
+working prototype, in a browser, Godot, Unity or any other engine: game feel, camera, sound, animation, enemy and level variety, balance testing, UI, mobile and
 performance on real phones.
 
 Each rule in these skills is something an AI left out of a game and a person had to ask for. Loaded into Claude
@@ -18,7 +18,7 @@ make sense for one kind of game live in a genre guide that Claude reads when the
 
 | Skill | What it does | Use it when |
 | --- | --- | --- |
-| [`game-detail-bar`](skills/game-detail-bar/SKILL.md) | The quality bar for any game: camera, feedback on every action, SFX and music, animation, content and characters that each play differently, scoring and balance, bot tests, art, **UI layout that never spills out of its frames**, UI motion, accessibility, input and rebinding, mobile, simulation timing and physics, saves, **performance** (the coding patterns that make canvas games slow on phones and what to write instead) and working method. Plus genre guides (below). Ends with a done checklist. | Pitching, speccing, building, reviewing or reporting on a game or a game feature. |
+| [`game-detail-bar`](skills/game-detail-bar/SKILL.md) | The quality bar for any game: camera, feedback on every action, SFX and music, animation, content and characters that each play differently, scoring and balance, bot tests, art, **UI layout that never spills out of its frames**, UI motion, accessibility, teaching the player, input and rebinding, mobile, simulation timing, seeded randomness and physics, saves and error recovery, **performance** (the patterns that make games slow on phones and what to write instead, for browsers and engines) and working method. Plus genre guides (below). Ends with a done checklist. | Pitching, speccing, building, reviewing or reporting on a game or a game feature. |
 | [`game-asset-pipeline`](skills/game-asset-pipeline/SKILL.md) | How to get art, sound and music made and processed: sprite-sheet prompt format for image models (pasted by hand or generated from the command line), effect sheets, a sheet cutter, UI frames decorated anywhere that still resize, a Pixabay SFX search and download tool, SFX loudness processing, music prompts and loop-point finding, an art encoding standard and a balance-bot pattern. | A game needs sprites, effects, backdrops, UI art, sound effects, ambience or music. |
 
 ### Genre guides (inside `game-detail-bar`)
@@ -30,6 +30,7 @@ make sense for one kind of game live in a genre guide that Claude reads when the
 | [run-based roguelites](skills/game-detail-bar/genres/roguelite-runs.md) | Runs of rooms or floors: rooms with identity, rewards and builds, meta progress |
 | [sims and economies](skills/game-detail-bar/genres/sim-economy.md) | Money or resource loops: goals, fairness, upgrades, collections, balance simulation |
 | [real-time multiplayer](skills/game-detail-bar/genres/multiplayer-realtime.md) | Live online play: choosing a netcode model, each player owning their character, smooth snapshots, binary messages, testing with lag |
+| [3D scenes](skills/game-detail-bar/genres/3d-scenes.md) | Any game drawn in 3D: model conventions and budgets, GPU texture compression, shader warm-up, animation blending, lighting, shadows, 3D performance |
 | [open worlds](skills/game-detail-bar/genres/open-world.md) | One large world to roam: chunks, chunk culling, streaming chunks in and out, instanced drawing |
 
 A game can use several guides at once. Genres without a guide (puzzle, racing, cards, rhythm, turn-based, strategy)

@@ -133,6 +133,13 @@ For DOM menus, a frame with **no fixed spans** can use CSS instead:
 edges, `stretch` for plain ones, plus `image-rendering: pixelated` for pixel art). A frame with fixed spans is drawn
 into a canvas with `drawFrame` and used as the element's background.
 
+In an engine, the built-in 9-slice (Godot `NinePatchRect` or a `StyleBoxTexture`, Unity sprites in Sliced mode set in
+the Sprite Editor) covers a frame with **no fixed spans**: enter the same insets, and use tiling for patterned edges
+(Godot axis stretch mode Tile; Unity Draw Mode Tiled). A frame with fixed spans uses the same layout from the JSON:
+either a small custom control that draws the parts with `frameParts` ported to the engine's drawing calls (Godot
+`draw_texture_rect_region` in `_draw`; Unity a custom `Graphic` that builds the quads), or the plain parts as a
+9-slice with each ornament placed on top as its own sprite at its measured position.
+
 Content goes inside the frame's safe inner rectangle (the insets scaled by `c`), never on the rim; see the UI layout
 rules in the `game-detail-bar` skill.
 

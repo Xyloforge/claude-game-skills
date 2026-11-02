@@ -42,6 +42,6 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/find_loop.py "<song>.mp3" --preview seam.wav
 ## Mixing in game
 
 - Duck the music for pause, menus and cinematics (about 35%), and for big catches or achievements; resume from the same position.
-- Fade out at the end of a run, and pause it while the tab is hidden.
+- Fade out at the end of a run, and pause it while the game is in the background (a hidden tab, a paused app).
 - **Boss entrance:** the stage music fades to silence, sound builds the scene (gates, heartbeat, bell, candles, organ), and the boss theme cuts in from its first bar exactly with the title card. After a death the theme starts at once, and the stage music returns at the checkpoint.
 - Each time of day or area that changes the mood gets its own track (a morning tide and a night tide).

@@ -106,16 +106,17 @@ that player skips it and draws its own live copy in its place, at the same depth
   each message type. The host also clamps every number a guest sends (damage, positions, speeds) to a sane range.
 - **Reconnection:** a dropped player gets a grace period (about 20 s) to come back to the same seat; the host leaving
   ends the room for everyone with a clear message.
-- **A host in a background tab must keep running.** Browsers stop animation frames in hidden tabs; tick the game from
-  a worker timer while hidden (worker timers keep running), and do not open the pause screen for the host while
-  guests play.
+- **A host in the background must keep running,** and the host never gets the pause screen while guests play. In a
+  browser, animation frames stop in hidden tabs: tick the game from a worker timer while hidden (worker timers keep
+  running). In Unity, turn on Run In Background. Phones suspend apps in the background, so a phone host's guests see
+  a clear "host paused" state instead of a frozen game.
 - **Host the relay near the players** (for example Singapore for South-East Asia) and keep WebSocket support enabled
   on any reverse proxy in front of it.
 
 ## 7. Testing
 
-- **Two or more headless browsers on one machine,** one hosting and the others joining by code, every mode and level
-  played, 0 page errors on every page.
+- **Two or more game instances on one machine** (headless browsers, or several engine builds), one hosting and the
+  others joining by code, every mode and level played, 0 errors in every instance.
 - **A lag simulator:** a small TCP proxy between the game and the relay that delays every chunk by a base plus
   jitter in each direction (for example 70 ± 25 ms), keeping order. Run every multiplayer test through it as well.
 - **A phone-speed guest:** CPU throttling 4× on the guest's page while measuring.
@@ -160,4 +161,4 @@ that player skips it and draws its own live copy in its place, at the same depth
 - [ ] Frequent messages (snapshots, inputs) are binary with one shared layout; bytes per snapshot reported.
 - [ ] Personal feedback goes to its player only; no echoes.
 - [ ] Protocol versioned; relay checks size, rate and senders; reconnection; hidden host tab keeps ticking.
-- [ ] Tested with two or more browsers, a lag simulator and a throttled guest, with the numbers reported.
+- [ ] Tested with two or more instances, a lag simulator and a throttled guest, with the numbers reported.

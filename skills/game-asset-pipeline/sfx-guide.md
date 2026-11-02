@@ -56,7 +56,7 @@ Shape the sound to the moment: low-pass a can so it lands dull and waterlogged, 
 - Layer samples per event and pick one at random with slight pitch jitter, so repeats never sound identical.
 - Rate-limit voices globally. Pain cries only on heavy blows; light hits and probes are silent.
 - Separate buses and sliders for SFX and music, saved apart from the save file.
-- Pause everything when the game pauses or the tab is hidden; cancel pending cues.
+- Pause everything when the game pauses or goes to the background (a hidden tab, a minimized window, a paused app); cancel pending cues.
 - Unlock audio on the first tap (silent buffer for iOS). Loading sound never blocks the start; until a file decodes, play nothing or a quiet synth stand-in.
 - Ambience beds per area and time of day (fire crackle, wind, sea, crickets), with occasional one-shots spaced out (distant gulls).
 

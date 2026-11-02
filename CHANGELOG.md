@@ -4,6 +4,29 @@ The plugin tracks commits on `main`; notable changes are listed here by date.
 
 ## 2026-11-02
 
+- **Any engine:** `game-detail-bar` and `game-asset-pipeline` now say what to do in a browser, Godot and Unity
+  wherever the how differs:
+  - automated walks and screenshots (Playwright, `godot --headless` with GUT or GdUnit4, Unity Test Runner);
+  - performance split into patterns for any engine, browser canvas patterns, and engine patterns (atlases and
+    batching, per-object updates, physics on decoration, overdraw, effect presets), with measurement on a real
+    phone through the engine profiler for native builds;
+  - menu-first loading and packed data for engines, audio unlock and fullscreen as browser notes, backgrounding in
+    general terms;
+  - art standard for engine builds (lossless masters, engine texture compression; download budgets only for web);
+  - UI frames with Godot and Unity 9-slice and fixed-span drawing;
+  - multiplayer testing with several instances of any kind.
+- Cover and store art at every size the game is listed at, instead of a single 512 px thumbnail.
+- New core part **9e teaching the player**: control within seconds, teach by doing one thing at a time, prompts that
+  leave when done and return when stuck, fail screens that name the cause, first-time cards later in the game,
+  fresh-profile and new-player checks.
+- **Seeded randomness** in section 11: one seeded generator for gameplay (per engine), a separate one for
+  cosmetics, state saved with the run, daily seeds in UTC, seed shown and replayable in QA.
+- **Errors never freeze the game** in section 12: catching what escapes (per engine), a friendly card with retry,
+  no save from a failed state, details for bug reports, tested on purpose.
+- New **3D scenes** genre guide: model conventions and budgets, GPU texture compression and colour spaces, loading
+  with shader warm-up and freeing memory, animation blending and layers, a small light rig with baked light and
+  tone mapping, tight shadows with contact shadows, transparency and readability, draw calls and 3D measurement.
+
 - `game-detail-bar` core rules, written for any engine with browser notes where they differ:
   - New **simulation timing and physics** section: a fixed step with an accumulator and interpolated drawing, a cap
     on catch-up steps, real-time easing and timers, time scale for hit-stop, no tunneling (speed caps, sweeps,

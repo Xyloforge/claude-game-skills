@@ -1,6 +1,6 @@
 ---
 name: game-detail-bar
-description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, accessibility, input and rebinding, mobile, simulation timing and physics, saves, performance and working method. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
+description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, accessibility, teaching the player, input and rebinding, mobile, simulation timing, seeded randomness and physics, saves and error recovery, performance and working method, for a browser, Godot, Unity or any engine. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds, 3D scenes) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
 ---
 
 # Game detail bar
@@ -14,6 +14,10 @@ like a finished game. Build all of that in the same turn, not as "polish later".
 This file holds the rules that apply to every game. Rules that only make sense for one kind of game live in the genre
 guides below. Neither this file nor the guides name or point into any particular game: examples describe a kind of
 thing ("a heavy enemy", "a fishing loop"), never a specific title.
+
+**Any engine.** The rules say *what* a finished game does and hold in a browser, Godot, Unity or anything else. Where
+the *how* differs, a rule says so: "in a browser" for web games (canvas, WebGL, the DOM), and the engine's own name
+(Godot, Unity) for its equivalent. Use the one that matches the game.
 
 ## How to use this skill
 
@@ -38,6 +42,7 @@ thing ("a heavy enemy", "a fishing loop"), never a specific title.
 | [genres/sim-economy.md](genres/sim-economy.md) | A money or resource loop: days or seasons, shops, upgrades, orders, customers, quotas |
 | [genres/multiplayer-realtime.md](genres/multiplayer-realtime.md) | Two or more players in one live game over a network, co-op or versus |
 | [genres/open-world.md](genres/open-world.md) | One large continuous world the player roams freely, far bigger than the screen |
+| [genres/3d-scenes.md](genres/3d-scenes.md) | A 3D world of any genre: models, animation, lighting, shadows and 3D performance |
 
 There is no guide yet for puzzle, racing, card, rhythm, turn-based or strategy games; the rules in this file still
 apply to them. Add a guide only after shipping that kind of game, from what was actually learned. Never invent one.
@@ -108,12 +113,13 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   - Loop a section the song itself repeats, never through its outro (find it by matching spectral windows: play the
     intro once, then jump back by the section length).
   - Duck the music for pause, menus and cinematics, and resume from the same position.
-  - Pause all audio when the tab is hidden (unless the game must keep running there, as an online host does).
+  - Pause all audio when the game goes to the background (a hidden browser tab, a minimized window, a paused phone
+    app), unless the game must keep running there, as an online host does.
 - **Big entrances:** the biggest moment of an area (a boss, a finale, a final round) gets silence first, a scene
   built from sound, then its theme cutting in from its first bar on the title card. After a retry, the theme starts
   at once.
-- **iOS/Safari:** unlock audio on the first tap with a silent buffer and resume on return. Sound must never block
-  the game from starting.
+- **Sound must never block the game from starting.** In a browser, audio only starts after a user gesture: unlock it
+  on the first tap or key with a silent buffer, and resume the audio context on return (iOS Safari suspends it).
 - Music prompts for a generator give the vibe, the bpm and what the track is for, and ask for an instrumental,
   seamless loop. They never list instruments.
 
@@ -190,10 +196,15 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   save migration, fairness rules. It grows with each feature (100 to 150 checks for a full game).
 - **Bots play the real game** (skilled, average, careless), over several seeds, asserting ranges, not single values,
   with a comment explaining each bound. The genre guides say which bots fit.
-- **Headless browser walk** (Playwright, `headless: true`, never a visible window) at 1280×720, 1366×768, 1920×1080
-  and a phone landscape such as 844×390: every menu and every mode, 0 page errors. Cover failure paths too: missing or
-  corrupt art, an audio timeout, retry.
-- **Profile on a simulated phone before handing over** (section 13).
+- **An automated walk through every menu and mode** at 1280×720, 1366×768, 1920×1080 and a phone landscape such as
+  844×390, with 0 errors, and screenshots of each screen. Cover failure paths too: missing or corrupt art, an audio
+  timeout, retry, an error thrown mid-play (section 12).
+  - In a browser: Playwright with `headless: true`, never a visible window.
+  - Godot: run scenes and tests from the command line with `godot --headless` (a test framework such as GUT or
+    GdUnit4), and capture screenshots from the viewport in a windowed run at each size.
+  - Unity: Test Runner play-mode tests, run from the command line with `-batchmode -runTests -testPlatform
+    PlayMode`, and screenshots from a play-mode test at each resolution.
+- **Profile on a phone before handing over** (section 13).
 - **QA hooks behind `?qa=1` or typed cheats** (invincible, jump to a level, spawn a given thing), documented and
   gated before release.
 
@@ -207,8 +218,10 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
 - **Characters and world in one rendering style** (pixel on pixel, painted on painted).
 - **Making the art:** the `game-asset-pipeline` skill (sheet prompts, generating with an image model, cutting,
   encoding, `ART.md`).
-- **Thumbnails are painted covers** (512×512) with one subject, eye contact, a warm accent against a cool background,
-  and no text; check them at 128 px.
+- **Cover and store art is painted key art** with one subject, eye contact, a warm accent against a cool background,
+  and no small text. Make it at every size the game is listed at (a web portal tile, an itch.io cover, Steam
+  capsules, a phone store icon), recompose rather than crop for very wide or very tall shapes, and check each one at
+  the smallest size it is shown (often about 128 px or less).
 - **Load smart:** an area's art loads behind a loading screen and is decoded before first draw; later areas load in
   the background once unlocked.
 - **Every frame name exists.** A missing frame usually draws nothing and raises no error, so a character blinks out
@@ -221,7 +234,7 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
 ### 9a. Look
 
 - **Painted UI kit and bundled fonts, never system fonts or plain rect bars.** 9-slice panels, themed frames, icons
-  at native sizes, fonts bundled as woff2 with their license.
+  at native sizes, fonts bundled with the game with their license (woff2 in a browser).
 - **A HUD that lives:** counters that roll up and bump, a time dial that pulses near the end, a recoverable-damage
   segment on bars, segmented meters, rank badges with their own colors, progress shown as a track with an icon
   instead of a number.
@@ -307,8 +320,9 @@ large share of any audience. These settings cost little when built in from the s
 
 - **Never colour alone.** Every meaning carried by colour (a telegraph, a team, rarity, a status, a correct or wrong
   answer) also has a shape, an icon, a pattern or a word. Check the main screens under the three common colour-vision
-  deficiencies (protanopia, deuteranopia, tritanopia); in a browser, the DevTools protocol does this headlessly with
-  `Emulation.setEmulatedVisionDeficiency`.
+  deficiencies (protanopia, deuteranopia, tritanopia): in a browser, the DevTools protocol does this headlessly with
+  `Emulation.setEmulatedVisionDeficiency`; in an engine, run the test screenshots through a colour-blindness
+  simulation (an image tool, or a full-screen filter shader behind the QA flag).
 - **Readable text:** at least 4.5:1 contrast against what is behind it (a plate or outline over a busy scene), a text
   size setting with at least three steps that the layout rules in 9b survive, and no text that disappears before it
   can be read: dialogue and tips advance on a press, or stay long enough.
@@ -323,6 +337,29 @@ large share of any audience. These settings cost little when built in from the s
   section), offered plainly without shaming the player. Assisted results keep their own records, like a harder mode.
 - **Settings are reachable before play** (on the title screen as well as in pause), stored with the other settings
   apart from the save, and shown as a preview while changing them.
+
+### 9e. Teaching the player (the first minutes)
+
+Most players who leave do it in the first minutes, usually because they did not understand what to do or why they
+failed. Teaching is part of the game, built with it, not a manual added at the end.
+
+- **Playing within seconds:** one or two presses from the title to control, no account or settings screens first,
+  and any story intro short and skippable.
+- **Teach by doing, one thing at a time.** Each new verb first appears where it is the only thing needed and failing
+  costs nothing, then is asked for under light pressure, then combined with what the player already knows
+  (introduce, test, twist). Never teach two new things in the same moment.
+- **Prompts in the world, not text walls:** one short line next to where it matters, showing the bound key or the
+  touch button (9a). A prompt disappears when the player has done the thing, not after a timer, and comes back if
+  the player seems stuck (no progress for a while).
+- **The first failures are gentle and explain themselves:** early mistakes cost little, a retry is instant, and the
+  fail screen names the cause with one tip that fits it ("the red ring means dodge, not block").
+- **New things are taught when they are first met,** later in the game too: a first-time card or a short coach
+  moment for a new enemy type, item or mechanic, not everything at the start.
+- **Once per player, always replayable:** tutorials and first-time cards are remembered with the settings, skippable
+  for returning players, and a how-to-play page with pictures sits in the pause menu.
+- **Prove it:** a run from a fresh profile (cleared storage or save folder) reaches real control in seconds and
+  shows every first-time prompt exactly once; then watch one person who has never seen the game play it without
+  help, and note every place they stop, guess or fail without knowing why.
 
 ## 10. Input, mobile and screens
 
@@ -352,10 +389,12 @@ large share of any audience. These settings cost little when built in from the s
   the desktop slot bar hides: it duplicates the buttons and sits under a thumb. Context buttons (use, talk, open)
   appear and glow only when something is in reach. An on-screen pause button, with the other corner HUD stepping
   aside for it. Any physical key switches to keyboard mode and any touch switches back.
-- **First tap enters fullscreen and locks landscape** where allowed (or portrait, if that is the game's shape); the
-  wrong orientation shows a "turn your phone" card and pauses (an online host keeps running for its guests). Respect
-  notch safe areas. Fullscreen comes back on the next tap after the player swipes out, with a Fullscreen On/Off
-  setting in pause (on by default for phones), hidden where the browser has no element fullscreen.
+- **The game owns the screen:** fullscreen and the game's orientation (landscape, or portrait if that is its shape),
+  notch safe areas respected, and a Fullscreen On/Off setting. A native or engine build sets these in its export or
+  player settings. In a browser, the first tap enters fullscreen and locks the orientation where allowed;
+  fullscreen comes back on the next tap after the player swipes out (on by default for phones); the setting hides
+  where the browser has no element fullscreen; and the wrong orientation shows a "turn your phone" card and pauses
+  (an online host keeps running for its guests).
 - **The scene fills every aspect ratio** (16:10, ultrawide, tall phones) with no bars or empty edges.
 
 ## 11. Simulation timing and physics
@@ -380,9 +419,19 @@ different height, fast objects pass through walls, and bots and replays stop bei
 - **Stable physics:** connected or stacked bodies within about 10:1 of each other's mass, angle limits on every joint
   of a ragdoll or chain, more solver iterations (not a smaller step) when stacks jitter, and resting bodies allowed to
   sleep.
+- **Seeded randomness.** Every gameplay choice (spawns, loot, damage rolls, level layout, enemy decisions) draws from
+  one seeded generator passed to the code that needs it, never from the global one (`Math.random()` in a browser,
+  `UnityEngine.Random` in Unity, the global `randf()` in Godot). Use a small seedable generator in a browser
+  (mulberry32 or sfc32), a seeded `RandomNumberGenerator` in Godot, and `System.Random` or
+  `Unity.Mathematics.Random` with a seed in Unity.
+  - Cosmetic randomness (particles, idle fidgets, sound pitch jitter) uses a separate generator, so changing an
+    effect never changes what drops.
+  - The run's seed and the generator's current state go into the save, so reloading cannot re-roll a reward.
+  - Daily content takes its seed from the date in UTC, so every player gets the same day.
+  - The seed shows in the QA overlay and bug reports, and a QA option starts a run from a given seed.
 - **Prove it:** run the same inputs at a forced 30, 60 and 144 frames a second and compare the results (jump height,
-  distance run, a projectile's path, a bot's score); they match within a small tolerance. Bots then run faster than
-  real time with the same results.
+  distance run, a projectile's path, a bot's score); they match within a small tolerance. The same seed and inputs
+  give the same run every time, and bots run faster than real time with the same results.
 
 ## 12. Saves and respect for the player
 
@@ -407,6 +456,19 @@ different height, fast objects pass through walls, and bots and replays stop bei
   autosave runs at most every few seconds, never every frame, and shows a small saving icon.
 - **Long games get slots,** each showing where the player is, time played and when it was saved.
 - **Settings are stored apart from progress,** so erasing or losing a save keeps them.
+- **An error never freezes the game or costs the save.**
+  - Catch what escapes: in a browser, `window.onerror` and `unhandledrejection`; in Unity,
+    `Application.logMessageReceived` for exceptions; in Godot, a script error aborts only the function it happened
+    in and the game runs on, so watch the error output in tests and guard the code that must finish (saving, scene
+    changes).
+  - Show a friendly card in the game's own style with "try again" and "back to menu", never a frozen frame, a blank
+    screen or a raw stack trace. A failed download or load gets the same card with a retry.
+  - Never write a save from a state that just failed; the last good save stays (saves happen before risky moments
+    such as a scene change).
+  - Log the details for a bug report (message, stack, game version, scene, seed, recent actions) and offer a "copy
+    details" button on the card.
+  - Test it: throw an error on purpose in an update, in a scene change and while loading (behind the QA flag), and
+    check that the card shows, the game recovers and the save is intact.
 - Erasing progress needs a second confirm and keeps the settings.
 - A failure costs a bounded, recoverable amount and offers a continue from the last checkpoint.
 
@@ -419,61 +481,84 @@ pays in full. Build fast from the start; these are the patterns that make games 
 them are about *repainting things that did not change* and *paying a high cost per object when there are hundreds of
 objects*.
 
-### Slow patterns to avoid (2D canvas)
+### Slow patterns in any engine
 | Slow pattern | Why it hurts | Do instead |
 | --- | --- | --- |
-| Canvas at the full device pixel ratio (up to 3×) | 3× is 9× the pixels of 1×; every fill and sprite costs 9× | Cap the backing store (about 1.5× on phones, 2× on desktop) and step it down by 0.25 when frames run slow; layout and input stay in CSS pixels |
+| Drawing or updating objects that are off screen | The draw calls and updates still cost, and swarms spawn just off screen | Cull every list (characters, pickups, shots, particles, numbers) against the view plus a margin; far objects update less often |
+| Unlimited particles and damage numbers | A big moment spawns thousands; outlined text is expensive | Cap them (a few hundred particles, a few dozen numbers) and drop the oldest |
+| Every object checking every other object (collision, separation, targeting) | O(n²): 300 objects is 45,000 pair checks | Spatial grid or hash, rebuilt once a frame; query only nearby cells |
+| Allocating objects, arrays or closures per object per frame in hot paths | Garbage-collector pauses show as stutter (JavaScript, C#, GDScript arrays and dictionaries alike) | Reuse arrays and temporary vectors, pool objects that come and go (shots, particles, enemies), inline hot loops |
+| Creating and destroying objects all the time | Spawning a node, GameObject or sprite is far more costly than moving one | Pool them: hide and reuse instead of destroy and create |
+| Looking things up every frame | Finding nodes or components by name or type in every update is slow | Look them up once and keep the reference |
+| One-time work done the first time it is needed (decoding art, building caches or tinted copies, compiling shaders, decoding sounds, loading fonts, filling pools) | The first hit, effect, enemy type, boss or area hitches mid-play, often for 100 ms or more | Do it ahead, behind a loading screen, a menu or a transition, and check the warm-up really did the work: a token warm-up (a tiny draw, a muted play) can look done while the real cost still waits |
+| Too much decoded art held at once | A decoded image costs width × height × 4 bytes whatever its file size (a 2048 × 2048 atlas is 16 MB); phone browsers reload or kill the tab at roughly 200 to 300 MB, and phone apps get killed too | Add up the decoded size of every atlas; under about 150 MB load it all up front; above that, load per level or area, prefetch the next one behind play, and release the rest. GPU-compressed textures (see the 3D guide, or the engine's texture import settings) cut it by 4 to 8 times |
+| Rendering at the full device resolution | A phone at 3× pixel density draws 9× the pixels of 1× | Cap the render resolution on phones (about 1.5×) and lower it further when frames run slow; keep UI sharp at native resolution |
+| Many sounds started per frame | Audio thread overload, crackle and stutter | A voice limit and a per-sound rate limit |
+
+### In a browser (2D canvas)
+| Slow pattern | Why it hurts | Do instead |
+| --- | --- | --- |
+| Canvas at the full device pixel ratio (up to 3×) | Every fill and sprite costs 9× at 3× | Cap the backing store (about 1.5× on phones, 2× on desktop) and step it down by 0.25 when frames run slow; layout and input stay in CSS pixels |
 | Redrawing static layers every frame (ground textures, tiled floors, tints, backdrops) | Full-screen fills are the most expensive thing a phone draws, and several layers stack | Paint static layers once into tile canvases (a few hundred pixels square) and stamp them; paint tiles just outside the view ahead, one per frame; keep only animated bits live |
 | Redrawing the paused game behind a menu, card pick or dialog | Hundreds of sprites redrawn under a dim overlay that never changes | Copy the canvas once when the menu opens and stamp the copy |
 | `shadowBlur`, `filter` (blur, drop-shadow) or large gradients every frame, especially on animated elements | Blur is about the costliest canvas operation; animating size or scale defeats any browser caching | Pre-render glows and soft shadows once per colour and size into small canvases and stamp them |
 | `save()` / `restore()` around every sprite | Copies the whole canvas state each time; hundreds per frame | Draw upright sprites straight into their rectangle; undo a flip or rotate transform by hand; reset `globalAlpha` yourself |
 | Path fills per object (ellipse shadows, rounded bars, rings) | Each path is rasterized from scratch, hundreds per frame | Stamp a pre-rendered image (shadow ellipse, rounded bar frame and fill) |
-| Drawing objects that are off screen | The draw calls still cost, and swarms spawn just off screen | Cull every sprite list (characters, pickups, shots, particles, numbers) against the view plus a margin |
-| Unlimited particles and damage numbers | A big moment spawns thousands; outlined text is expensive | Cap them (a few hundred particles, a few dozen numbers) and drop the oldest |
 | Text with outlines redrawn every frame for static labels | `strokeText` with thick round joins is costly | Cache static labels into canvases; only redraw text that changes |
-| Every object checking every other object (collision, separation, targeting) | O(n²): 300 objects is 45,000 pair checks | Spatial grid or hash, rebuilt once a frame; query only nearby cells |
-| Allocating closures, arrays or objects per object per frame in hot paths | Garbage-collector pauses show as stutter | Reuse arrays, inline hot loops, avoid callbacks in the innermost query |
-| One-time work done the first time it is needed (decoding art, building caches or tinted copies, compiling shaders, decoding sounds, loading fonts, filling pools) | The first hit, effect, enemy type, boss or area hitches mid-play, often for 100 ms or more | Do it ahead, behind a loading screen, a menu or a transition, and check the warm-up really did the work: a token warm-up (a tiny draw, a muted play) can look done while the real cost still waits |
-| Too much decoded art held at once | A decoded image costs width × height × 4 bytes whatever its file size (a 2048 × 2048 atlas is 16 MB); phone browsers reload or kill the tab at roughly 200 to 300 MB | Add up the decoded size of every atlas; under about 150 MB load it all up front; above that, load per level or area, prefetch the next one behind play, and release the rest |
-| Many sounds started per frame | Audio thread overload, crackle and stutter | A voice limit and a per-sound rate limit |
+
+### In an engine (Godot, Unity)
+| Slow pattern | Why it hurts | Do instead |
+| --- | --- | --- |
+| Sprites from many separate textures | Each texture change breaks a batch and adds a draw call | Pack sprites that draw together into atlases (Unity Sprite Atlas; Godot batches 2D items that share a texture and material) |
+| Thousands of objects each running their own per-frame update | Per-object update calls (`_process`, `Update`) add up long before the work inside them does | One manager loops over plain data for crowds, bullets and particles; turn processing off on objects that are idle or far away |
+| Physics bodies on decoration | Every body costs in the physics step even when nothing touches it | Colliders only on what gameplay needs; static bodies for walls; simple shapes (circles, boxes, capsules) instead of polygons |
+| Large transparent layers stacked on screen | Overdraw: phones pay for every pixel of every layer | Trim transparent sprites tight, avoid full-screen transparent overlays, use opaque materials where possible |
+| Full-screen effects left at desktop settings | Glow, blur and anti-aliasing passes cost the most on phones | A quality setting with lower presets for phones, chosen by default on them |
 
 ### Loading (the first screen shows fast)
 
-- **Menu first, game after.** The page loads only what the title screen or menu needs (its code, UI art, fonts,
-  menu music). The game's code and art load behind the menu while the player reads it, and anything still missing
-  loads behind a short loading screen when they press play. A player should see a working menu within a second or
-  two on a phone, never a blank page while the whole game downloads.
+- **Menu first, game after.** Only what the title screen or menu needs (its code, UI art, fonts, menu music) loads
+  first. The game's code and art load behind the menu while the player reads it, and anything still missing loads
+  behind a short loading screen when they press play. A player sees a working menu within a second or two on a
+  phone, never a blank screen while the whole game loads. In an engine, keep the first scene small and load the
+  rest in the background (Godot `ResourceLoader.load_threaded_request`, Unity asynchronous scene loading or
+  Addressables).
 - **One packed data file.** All game data (levels, items, enemies, abilities, dialogue, balance numbers) ships as one
-  file per game, not dozens of small JSON fetches: one request, compressed by the server, parsed once at load. Put a
-  version in its URL so it can be cached for a long time and an update is picked up at once. Art stays in atlases
-  for the same reason.
+  file, not dozens of small ones read at startup: in a browser, one request, compressed by the server, parsed once,
+  with a version in its URL so it can be cached for a long time and an update is picked up at once; in an engine,
+  resources inside the game package rather than loose files. Art stays in atlases for the same reason.
 
-For 3D (Three.js): too many draw calls (use instancing or merged geometry), shadows on everything (shadow-cast only
-key objects, small shadow maps), full device pixel ratio, uncapped particles, and per-frame geometry or material
-creation. The same "cache what does not change, cap and cull the rest" rule applies. In 3D scenes, never fill the
-world with flat billboard grass, trees or shrubs.
+3D games: read [genres/3d-scenes.md](genres/3d-scenes.md) (draw calls, shadows, texture compression, shader
+warm-up, 3D measurement).
 
 ### Measure it (before calling a game or big feature done)
-- **Simulate a phone:** headless Chromium at a phone landscape size (844×390), `deviceScaleFactor: 3`,
-  `isMobile: true`, and CPU throttling 4× through the DevTools protocol (`Emulation.setCPUThrottlingRate`). Hold the
-  resolution fixed while measuring.
+- **Measure on a phone:**
+  - In a browser, simulate one: headless Chromium at a phone landscape size (844×390), `deviceScaleFactor: 3`,
+    `isMobile: true`, and CPU throttling 4× through the DevTools protocol (`Emulation.setCPUThrottlingRate`). Hold
+    the resolution fixed while measuring.
+  - In an engine, run a development build on a real low-to-mid phone with the profiler attached (Godot remote
+    debugging with the Profiler and Monitors; Unity Profiler attached to a Development Build). A desktop gives no
+    reliable phone simulation for native builds.
 - **Measure the worst case:** the biggest crowd the game can produce, the busiest effect, and every animated menu or
   card screen (they are often slower than play).
 - **Find the cost, don't guess:**
   - frame time with each draw layer switched off in turn; the layer whose removal saves the most is the one to fix;
-  - canvas calls per frame (wrap the `CanvasRenderingContext2D.prototype` methods and count `save`, `fill`,
-    `drawImage`, `strokeText` and so on);
-  - a JavaScript CPU profile (DevTools protocol `Profiler`) to tell game logic from canvas drawing;
+  - draw calls per frame: in a browser, wrap the `CanvasRenderingContext2D.prototype` methods and count `save`,
+    `fill`, `drawImage`, `strokeText` and so on (or read `renderer.info` in three.js); in Godot, the draw call
+    monitors; in Unity, the Frame Debugger and the Stats panel;
+  - a CPU profile to tell game logic from drawing (the DevTools protocol `Profiler` in a browser, the engine
+    profiler elsewhere);
   - game-logic milliseconds with 0, 150 and 300 objects.
+  In a browser,
   `node ${CLAUDE_SKILL_DIR}/scripts/phone_perf.mjs <url> --setup "<js to reach the worst scene>" --off "<js to switch a layer off>"`
   does the frame-time, layer and call-count part for any page.
 - **Find stutter, not only slowness:** report the 99th percentile and the worst frame, not just the median; a smooth
   median with one 150 ms frame still feels broken. Time every game function and keep the top few for each frame over
-  about 35 ms, so a spike names its cause. Measure from a fresh page load and watch every "first" (first hit, first
+  about 35 ms, so a spike names its cause. Measure from a fresh start and watch every "first" (first hit, first
   status effect, first enemy type, first boss, first new area): one-time costs never show on a warmed-up run.
-- **Targets on the simulated phone:** median frame at or near 16.7 ms in the worst case, no frames over 50 ms while
-  scrolling onto new ground or meeting anything for the first time, game logic under about 2 ms for 300 objects, and fewer than about 500 `save`/`restore`
-  pairs per frame.
+- **Targets on the phone:** median frame at or near 16.7 ms in the worst case, no frames over 50 ms while moving onto
+  new ground or meeting anything for the first time, and game logic under about 2 ms for 300 objects. In a browser,
+  fewer than about 500 `save`/`restore` pairs per frame; in an engine, draw calls in the low hundreds at most.
 
 ## 14. Working method
 
@@ -502,7 +587,7 @@ world with flat billboard grass, trees or shrubs.
 - [ ] Every option, character, opponent and item has its own verb, job or rule and a hook; each area changes the
       rules; stand-ins are listed.
 - [ ] Scoring rewards skill; a bot simulation supports the balance numbers; nothing takes earned progress.
-- [ ] `verify.js` and bot runs pass; a headless walk at desktop and phone sizes shows 0 errors.
+- [ ] `verify.js` and bot runs pass; an automated walk at desktop and phone sizes shows 0 errors.
 - [ ] UI: painted kit and bundled fonts; every panel uses the content rect; no text past a border; bars fill inside
       their frames; layouts survive the content count; HUD regions never stack; stale HUD clears; screenshots at
       desktop and phone sizes checked.
@@ -510,16 +595,23 @@ world with flat billboard grass, trees or shrubs.
 - [ ] Accessibility: nothing carried by colour alone (checked under colour-blind simulation); text contrast and size
       setting; shake, flash and motion settings; subtitles and cues for important sounds; hold-to-toggle; an assist
       option where timing is hard; settings reachable from the title screen.
+- [ ] Teaching: control within seconds of the title; one new thing at a time, taught by doing; prompts leave when
+      done and return when stuck; fail screens name the cause; first-time cards once per player; checked from a
+      fresh profile and by watching one new player.
 - [ ] Touch, pad and rebindable keys, nothing needs a held mouse button; gameplay reads actions from one binding
       table; presses fire once; rebinding swaps conflicts and resets; deadzone and normalized diagonals; inputs
       release on focus loss; no keyboard keys shown on touch; touch buttons show cooldowns and charges; on-screen
       pause; fullscreen (re-entered, with a setting) and rotate card; safe areas; fills every aspect ratio.
 - [ ] Logic and physics on a fixed step with interpolated drawing; results match at 30, 60 and 144 fps; fast objects
-      cannot pass through walls.
+      cannot pass through walls; gameplay randomness comes from a seeded generator kept apart from cosmetic
+      randomness, saved with the run, so the same seed and inputs replay the same run.
 - [ ] Saves are versioned plain data with migrations tested from every old version, a backup on a broken save, a
       notice when storage fails, and saves on checkpoints, rewards, pause and going to the background.
-- [ ] Performance measured on a simulated phone (section 13): the worst case and every animated menu hold 60 fps or
-      close, the worst frame from a fresh load is reported, and none of the slow patterns are in the code.
-- [ ] The menu shows before the game code and art finish loading; game data ships as one versioned packed file.
+- [ ] Errors: a thrown error, a failed load and a broken scene change each show a friendly card with retry and
+      leave the save intact (tested on purpose).
+- [ ] Performance measured on a phone (section 13; simulated in a browser, a real device for engine builds): the
+      worst case and every animated menu hold 60 fps or close, the worst frame from a fresh start is reported, and
+      none of the slow patterns are in the code.
+- [ ] The menu shows before the game code and art finish loading; game data ships as one packed file.
 - [ ] `SPEC.md`, `ART.md` and `AUDIO.md` updated with the real numbers.
 - [ ] The checklist of every genre guide used.

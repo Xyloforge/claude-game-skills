@@ -46,7 +46,7 @@ guide when the game also fights. Example numbers are in [../reference.md](../ref
   and that every checkpoint is reached.
 - **Ledge checks:** every jump on the main route is reachable with the base move set (a deterministic check of
   distances and heights against jump reach).
-- **Camera checks:** headless screenshots at each checkpoint and at the deepest drop at desktop and phone sizes, with
+- **Camera checks:** automated screenshots at each checkpoint and at the deepest drop at desktop and phone sizes, with
   the player inside the safe frame.
 
 ## Checklist
