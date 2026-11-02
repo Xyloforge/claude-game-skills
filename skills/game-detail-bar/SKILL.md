@@ -1,6 +1,6 @@
 ---
 name: game-detail-bar
-description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, input and mobile, saves, performance and working method. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
+description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, accessibility, input and rebinding, mobile, simulation timing and physics, saves, performance and working method. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
 ---
 
 # Game detail bar
@@ -48,9 +48,10 @@ apply to them. Add a guide only after shipping that kind of game, from what was 
 
 These apply to any view: a board, a map, a side view, top-down or 3D.
 
-- **Never lock the camera to its target.** Ease toward a target (lerp about 0.1 per frame, or `dt * 6` in seconds),
-  with **look-ahead** in the direction of movement or attention. Look further while moving fast, less while the
-  player is busy with something precise.
+- **Never lock the camera to its target.** Ease toward a target by `1 - exp(-6 * dt)` of the gap each frame (about
+  0.1 at 60 fps; a fixed 0.1 per frame would ease faster on a 144 Hz screen, see section 11), with **look-ahead** in
+  the direction of movement or attention. Look further while moving fast, less while the player is busy with
+  something precise.
 - **The camera reacts to events; the HUD never shakes.**
   - *Trauma shake:* squared trauma that decays every frame; the biggest event wins (`max`, not `+`).
   - *Directional kick:* a small push away from where the event came from, clamped.
@@ -192,7 +193,7 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
 - **Headless browser walk** (Playwright, `headless: true`, never a visible window) at 1280×720, 1366×768, 1920×1080
   and a phone landscape such as 844×390: every menu and every mode, 0 page errors. Cover failure paths too: missing or
   corrupt art, an audio timeout, retry.
-- **Profile on a simulated phone before handing over** (section 12).
+- **Profile on a simulated phone before handing over** (section 13).
 - **QA hooks behind `?qa=1` or typed cheats** (invincible, jump to a level, spawn a given thing), documented and
   gated before release.
 
@@ -299,11 +300,52 @@ exit motion, and each motion pairs with its sound (section 3).
 - **Verify it:** screenshots or frame strips mid-motion, checking that no animation overlaps, clips off screen or
   hides the action at phone sizes.
 
+### 9d. Accessibility
+
+Players with low vision, colour blindness, motion sickness, photosensitivity, hearing loss or limited hand use are a
+large share of any audience. These settings cost little when built in from the start.
+
+- **Never colour alone.** Every meaning carried by colour (a telegraph, a team, rarity, a status, a correct or wrong
+  answer) also has a shape, an icon, a pattern or a word. Check the main screens under the three common colour-vision
+  deficiencies (protanopia, deuteranopia, tritanopia); in a browser, the DevTools protocol does this headlessly with
+  `Emulation.setEmulatedVisionDeficiency`.
+- **Readable text:** at least 4.5:1 contrast against what is behind it (a plate or outline over a busy scene), a text
+  size setting with at least three steps that the layout rules in 9b survive, and no text that disappears before it
+  can be read: dialogue and tips advance on a press, or stay long enough.
+- **Motion and flashes:** a screen shake slider (0 to 100%), a reduced flashes option, and a reduced motion option
+  that tones down camera kicks, zoom punches and UI overshoot (in a browser, default it from
+  `prefers-reduced-motion`). Never more than three full-screen flashes in one second.
+- **Sound has a picture:** subtitles for all speech, with the speaker's name, and captions or an on-screen cue for
+  sounds that carry information (danger behind the player, a timer about to end, an enemy off screen).
+- **Hands:** every hold action can be switched to a toggle, every control is rebindable (section 10), nothing needs
+  fast repeated mashing without an option to hold instead, and touch targets are at least about 44 px.
+- **An assist option** in games with hard timing (slower game speed, more health, wider windows, or skipping a
+  section), offered plainly without shaming the player. Assisted results keep their own records, like a harder mode.
+- **Settings are reachable before play** (on the title screen as well as in pause), stored with the other settings
+  apart from the save, and shown as a preview while changing them.
+
 ## 10. Input, mobile and screens
 
 - **Keyboard first, and every hold action on a key.** Many people play on a laptop touchpad: nothing may need a held
-  mouse button, and click is an alternative, never the only way. Controller support (Gamepad API, rumble on big
-  events). Every key rebindable, bindings stored in localStorage.
+  mouse button, and click is an alternative, never the only way. Controller support (rumble on big events; in a
+  browser, the Gamepad API).
+- **Game code reads actions, never raw keys.** A binding table maps keys, mouse buttons, pad buttons and touch buttons
+  to named actions (move, jump, attack, interact, pause), and gameplay asks only about actions. Rebinding, pads,
+  touch and the key prompts in 9a all work from that one table.
+- **Press, hold and release are different questions.** A press fires once, on the frame the button goes down, and
+  never repeats while held unless the action is meant to repeat; a hold is read every step; a release ends charges.
+  Record presses as they arrive and hand them to the next game step, so a tap shorter than one step is never lost and
+  never counted twice (this matters with the fixed step in section 11).
+- **Every key and button rebindable:** press the new key to bind it, Escape cancels, a key already in use offers to
+  swap, one button resets to defaults, mouse and pad buttons rebind too, and the bindings are saved by action name
+  with the settings. Bind physical keys (in a browser, `KeyboardEvent.code`) so the same positions work on any
+  keyboard layout, and show the player's own key label in prompts (`navigator.keyboard.getLayoutMap()` where the
+  browser has it).
+- **Analog and diagonal movement:** sticks get a circular deadzone (about 0.15 to 0.2) with the rest of the range
+  rescaled to start from zero, so slow movement is smooth; keyboard diagonals are normalized so they are not faster
+  than straight lines.
+- **Nothing stays stuck:** when the window loses focus or the app goes to the background, every held input is
+  released (the key-up never arrives) and the game pauses.
 - **Phones:** a thumb stick or pads plus buttons on the other side, each finger tracked on its own; buttons that
   change role in context; touch slop on small buttons; swipeable pages.
 - **Touch buttons carry the state the desktop bar showed** (cooldown sweep, charges, meter rings, a recast glow), and
@@ -315,19 +357,62 @@ exit motion, and each motion pairs with its sound (section 3).
   notch safe areas. Fullscreen comes back on the next tap after the player swipes out, with a Fullscreen On/Off
   setting in pause (on by default for phones), hidden where the browser has no element fullscreen.
 - **The scene fills every aspect ratio** (16:10, ultrawide, tall phones) with no bars or empty edges.
-- **Smoothness:** step by real frame time in sub-steps of at most 1/60 s (no judder at 90, 120 or 144 Hz), and
-  everything in section 12.
 
-## 11. Saves and respect for the player
+## 11. Simulation timing and physics
 
-- Save the run, day or level in progress so a reload resumes it. Migrate old saves. Make payouts exactly once (flags,
-  so a reload cannot pay twice).
+A game whose logic steps by the frame time plays differently on a 60 Hz phone and a 144 Hz monitor: jumps reach a
+different height, fast objects pass through walls, and bots and replays stop being repeatable.
+
+- **Game logic and physics run at a fixed step** (usually 60 a second): each frame adds the real elapsed time to an
+  accumulator and runs as many fixed steps as fit. Use the engine's own fixed step where it has one (Godot
+  `_physics_process`, Unity `FixedUpdate`); in a browser loop, write the accumulator yourself.
+- **Drawing interpolates** between the previous and the current step by the leftover fraction, so motion is smooth on
+  any refresh rate and never judders at 90, 120 or 144 Hz.
+- **Cap the steps per frame** (about 5) and drop the remaining time after a long stall (returning to a hidden tab, a
+  loading hitch), so the game never tries to catch up on seconds of simulation at once.
+- **Everything outside the fixed step uses real time:** easing by `1 - exp(-k * dt)` instead of a fixed fraction per
+  frame, timers and cooldowns in seconds, never in frames.
+- **Hit-stop and slow motion scale the simulation's time,** while UI and menus run on real time (9c).
+- **Fast objects never pass through walls.** A small object moving more than about half the thickness of the thinnest
+  wall in one step can skip past it. Cap speeds, trace a ray or sweep from the previous to the new position for
+  bullets and thrown things, turn on the engine's continuous collision for fast bodies, and keep walls thicker than
+  one step of the fastest object.
+- **Stable physics:** connected or stacked bodies within about 10:1 of each other's mass, angle limits on every joint
+  of a ragdoll or chain, more solver iterations (not a smaller step) when stacks jitter, and resting bodies allowed to
+  sleep.
+- **Prove it:** run the same inputs at a forced 30, 60 and 144 frames a second and compare the results (jump height,
+  distance run, a projectile's path, a bot's score); they match within a small tolerance. Bots then run faster than
+  real time with the same results.
+
+## 12. Saves and respect for the player
+
+- Save the run, day or level in progress so a reload resumes it. Make payouts exactly once (flags, so a reload cannot
+  pay twice).
+- **Save plain data, never live objects:** each system writes its own part of one versioned object (`{ version: 3,
+  ... }`) of numbers, strings, lists and ids, and loading rebuilds the objects from it.
+- **Every save has a version, and old versions migrate:** one small function per version step (2 to 3, 3 to 4), run
+  in order on load. Keep a sample save from every released version and load each one in `verify.js`.
+- **A broken save never loses progress:** write the new save before replacing the old one (a temporary file renamed
+  over it, or two alternating slots in browser storage) and keep the previous one as a backup. On load, if the save
+  does not parse or fails its checks, load the backup and tell the player; never crash and never silently start a
+  new game.
+- **Check what loads:** types, ranges, and ids of content that no longer exists (dropped or replaced with something
+  fair). Players edit saves.
+- **Storage can fail:** in a browser, `localStorage` throws in some private modes and when full, and can be cleared by
+  the browser; on desktop and phones, write into the platform's user data folder (Godot `user://`, Unity
+  `Application.persistentDataPath`). Catch every failure, keep playing, and show a small notice that progress is not
+  being saved.
+- **When to save:** at checkpoints, right after rewards and purchases, when the player pauses or quits, and when the
+  game goes to the background (in a browser, `visibilitychange` and `pagehide`; on phones, the app pause event). An
+  autosave runs at most every few seconds, never every frame, and shows a small saving icon.
+- **Long games get slots,** each showing where the player is, time played and when it was saved.
+- **Settings are stored apart from progress,** so erasing or losing a save keeps them.
 - Erasing progress needs a second confirm and keeps the settings.
 - A failure costs a bounded, recoverable amount and offers a continue from the last checkpoint.
 
 ---
 
-## 12. Performance (no slow patterns, measured on a phone)
+## 13. Performance (no slow patterns, measured on a phone)
 
 A game that runs at 60 fps on a desktop can be unplayable on a phone: a desktop graphics card hides costs that a phone
 pays in full. Build fast from the start; these are the patterns that make games slow and what to do instead. Most of
@@ -390,7 +475,7 @@ world with flat billboard grass, trees or shrubs.
   scrolling onto new ground or meeting anything for the first time, game logic under about 2 ms for 300 objects, and fewer than about 500 `save`/`restore`
   pairs per frame.
 
-## 13. Working method
+## 14. Working method
 
 - **Measure before and after, and report the numbers** (frame times, response time, bytes, pass rates). "It feels
   faster" is not a result.
@@ -422,10 +507,18 @@ world with flat billboard grass, trees or shrubs.
       their frames; layouts survive the content count; HUD regions never stack; stale HUD clears; screenshots at
       desktop and phone sizes checked.
 - [ ] Every HUD and UI element animates on enter, change, idle and exit, each with its own sound.
-- [ ] Touch, pad and rebindable keys, nothing needs a held mouse button; no keyboard keys shown on touch; touch
-      buttons show cooldowns and charges; on-screen pause; fullscreen (re-entered, with a setting) and rotate card;
-      safe areas; fills every aspect ratio.
-- [ ] Performance measured on a simulated phone (section 12): the worst case and every animated menu hold 60 fps or
+- [ ] Accessibility: nothing carried by colour alone (checked under colour-blind simulation); text contrast and size
+      setting; shake, flash and motion settings; subtitles and cues for important sounds; hold-to-toggle; an assist
+      option where timing is hard; settings reachable from the title screen.
+- [ ] Touch, pad and rebindable keys, nothing needs a held mouse button; gameplay reads actions from one binding
+      table; presses fire once; rebinding swaps conflicts and resets; deadzone and normalized diagonals; inputs
+      release on focus loss; no keyboard keys shown on touch; touch buttons show cooldowns and charges; on-screen
+      pause; fullscreen (re-entered, with a setting) and rotate card; safe areas; fills every aspect ratio.
+- [ ] Logic and physics on a fixed step with interpolated drawing; results match at 30, 60 and 144 fps; fast objects
+      cannot pass through walls.
+- [ ] Saves are versioned plain data with migrations tested from every old version, a backup on a broken save, a
+      notice when storage fails, and saves on checkpoints, rewards, pause and going to the background.
+- [ ] Performance measured on a simulated phone (section 13): the worst case and every animated menu hold 60 fps or
       close, the worst frame from a fresh load is reported, and none of the slow patterns are in the code.
 - [ ] The menu shows before the game code and art finish loading; game data ships as one versioned packed file.
 - [ ] `SPEC.md`, `ART.md` and `AUDIO.md` updated with the real numbers.

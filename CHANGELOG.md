@@ -4,6 +4,24 @@ The plugin tracks commits on `main`; notable changes are listed here by date.
 
 ## 2026-11-02
 
+- `game-detail-bar` core rules, written for any engine with browser notes where they differ:
+  - New **simulation timing and physics** section: a fixed step with an accumulator and interpolated drawing, a cap
+    on catch-up steps, real-time easing and timers, time scale for hit-stop, no tunneling (speed caps, sweeps,
+    continuous collision), stable joints and stacks, and a 30/60/144 fps comparison test. The camera ease in
+    section 1 is now frame-rate independent.
+  - **Saves** expanded: plain versioned data, migrations tested from every old version, a backup when a save is
+    broken, load checks, storage failures, when to save, slots, settings kept apart.
+  - New **accessibility** part (9d): never colour alone (with colour-blind simulation), contrast and text size,
+    shake/flash/motion settings and the three-flashes rule, subtitles and sound cues, hold-to-toggle, assist
+    options, settings before play.
+  - **Input** expanded: gameplay reads actions from one binding table, press/hold/release with presses handed to
+    the fixed step, a full rebinding flow on physical keys, stick deadzone and normalized diagonals, inputs released
+    on focus loss.
+  - Sections renumbered: simulation is 11, saves 12, performance 13, working method 14. Done checklist updated.
+- `game-detail-bar` action combat guide: **how enemies think**: named states with enter and exit cleanup, noticing
+  before chasing, attack tokens, steering, A\* or flow-field paths re-planned a few times a second, slower thinking
+  than moving, behaviour trees or utility scores only when needed, a debug view.
+
 - `game-detail-bar`: new **open worlds** genre guide: the world split into chunks that own their contents, chunk
   culling against the view and a view distance, streaming chunks in ahead and freeing them behind, and instanced
   drawing of repeated objects per chunk.

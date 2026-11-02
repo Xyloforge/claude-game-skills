@@ -61,13 +61,38 @@ are in [../reference.md](../reference.md).
   the player into the others.
 - **Give each enemy a hook,** ideally a joke tied to its attacks (a bell-ringer whose head is the bell), not the
   typical skeleton or ghost.
-- **Enemies use the space:** they path around obstacles (a flow field from the player, rebuilt when the map changes),
-  climb ledges, wait under cover, ambush from doors, stop at edges.
+- **Enemies use the space:** they path around obstacles, climb ledges, wait under cover, ambush from doors, stop at
+  edges (how they find paths is below).
 - **Groups have roles:** a lookout that calls others, a leader that buffs, a support that heals or shields. Killing
   the right one first is a decision.
 - **Breakable props** react to hits (shake, crack, break into debris) and are drawn so they read as breakable.
 - **Hazards hurt enemies too:** knocking enemies into spikes, traps or fire is a reward (style points, a kill), and
   hazards take a share of max health instead of one-shotting.
+
+### How enemies think
+
+- **One state machine per enemy, with named states** (idle, patrol, notice, chase, wind-up, attack, recover, hurt,
+  dead). Each state has enter, update and exit: enter starts its animation, sound and telegraph; exit cleans up
+  (stops looping sounds, removes telegraphs, restores speed). Transitions live in one place. Hurt and death can
+  interrupt any state and always run the current state's exit, so nothing is left behind.
+- **Notice before chasing.** Enemies perceive through a sight range and cone with line of sight, and hear loud
+  actions; on first sight they play a short reaction beat (about 0.3 to 0.5 s, a "!" and a sound) before they chase.
+  When they lose the player they search the last seen place for a while, then return.
+- **Only a few attack at once.** Hand out a small number of attack tokens (about 2 or 3, fewer on easy): an enemy
+  needs one to start a wind-up and returns it after recovering. The rest circle, reposition or wait at range, so a
+  crowd stays readable and fair.
+- **Movement by steering:** seek and arrive (slowing down near the target instead of overshooting), separation from
+  nearby enemies through the spatial grid, and a turn-rate limit so they never jitter or spin.
+- **Paths:** A\* on a grid or nav mesh when a few enemies have their own goals; one flow field from the player for
+  many enemies chasing the same target. Rebuild when the map changes, spread the work over several frames, and
+  re-plan a few times a second rather than every frame.
+- **Think slower than they move:** decisions run about 5 to 10 times a second, staggered across enemies; movement and
+  animation run every step.
+- **Bigger brains only when needed:** when a state machine gets tangled (a boss, a squad with roles), use a behaviour
+  tree or utility scores (rate each option by distance, health, cooldowns and what was just used, then pick the best
+  with a little randomness and never the same move twice in a row).
+- **A debug view behind the QA flag** shows each enemy's state, target, path, sight cone and whether it holds an
+  attack token.
 
 ## 5. Bosses
 
@@ -109,5 +134,7 @@ are in [../reference.md](../reference.md).
 - [ ] Every skill has its own verb; the basic attack is a combo with a finisher; the signature empowers at a full
       meter; at least one second-press skill; movement pays off.
 - [ ] Each enemy has a job, a tell and a hook; enemies path around obstacles; hazards hurt enemies.
+- [ ] Enemies run named states with enter and exit cleanup; they notice before chasing; attack tokens limit how many
+      attack at once; steering with separation; paths re-planned a few times a second; a debug view of states.
 - [ ] Bosses: phases that change rules, an entrance, a signature mechanic, fair unblockables.
 - [ ] Skilled, masher and soak bots pass; every skill survives being cancelled mid-cast.
