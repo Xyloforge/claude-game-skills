@@ -30,6 +30,28 @@ Image models make **one image per request**, so each prompt packs many sprites o
   - After cutting, compare head height across every frame of a character (standing frames should match within about 10 percent). If a sheet drifts, regenerate it with the reference; scaling cannot fix proportions.
   - Props, buildings, UI and enemies are written-only and fully described.
   - Without an attachment (a brand-new character or object), end with "Do not ask for a reference image; this description is complete."
+- **Reference images beat words, so use one whenever it helps:**
+  - Image models follow a picture far better than a description of framing, camera angle, size on screen, pose or
+    layout. When a sheet keeps coming back at the wrong angle, size or position, stop rewording: attach a reference.
+  - **Style reference:** an approved sheet from the same game (palette, outline, rendering, materials). Say what it
+    is for: "use the attached image only as the reference for the art style; the subject is the new one described".
+  - **Layout reference from someone else's game or a photo:** do not attach it as is, because the model copies the
+    artwork along with the layout. Measure what matters (where the subject sits as a share of the frame, its size,
+    its direction) and draw a plain **layout guide** from those numbers: flat grey and tan shapes on the magenta
+    background, one per element, with a note in the prompt that each shape marks exactly where that element goes.
+    The model copies the composition and paints its own art in your style.
+  - **Art that must meet the screen edges** (anything cut off by the edge of the view: a foreground object, an
+    overlay, a character entering from the side): ask for each frame as a screen-shaped rectangle (16:9) with a thin
+    black border, the art cut cleanly by the border lines. Cut inside the borders and map each frame 1:1 onto the
+    screen, anchored to the edges where the art is cut, so the cuts land exactly on the screen edges. Frames drawn
+    without a border have no known screen edge, and the cut shows in game.
+  - If no suitable reference exists, **ask the user for one** (a screenshot of the look they mean, a sketch, an
+    earlier approved sheet) before generating a third round of the same miss.
+- **Refusals:** if the image tool refuses a sheet, do not keep rewording it to get past the filter. Check whether the
+  sheets that did pass already cover enough (fewer frames with in-betweens animated in code, or a motion hidden off
+  screen), and otherwise tell the user which sheet was refused and give them the prompt to run in another tool, with
+  the reference images to attach. A sheet that keeps being refused or keeps missing is the moment to ask the user
+  for a reference image, not to try a sixth wording.
 - **Same scale on every sheet:** for pixel art, state the art pixel size ("one art pixel is about 4x4 image pixels", matching the backdrops); for painted art, state relative heights ("the enemy is twice the hero's height"). Never fix the sheet or cell size. `cut_sheet.py --scale` evens out what ChatGPT ignores.
 - **Characters and world in one style:** the characters' rendering must match the backdrops (pixel heroes on a pixel world, painted on painted). Smooth anime figures on a pixel backdrop looked pasted on.
 - **Characters need a hook, not an archetype.** Generic designs (copper-haired knight, black-coat swordsman, silver-haired priestess) fall flat. Give each one: a silhouette you can recognise in black (an odd weapon, a huge prop, a strange hat), one bold signature color that pops on the game's backgrounds, a personality in the face and stance (a grin, a sulk, a smug look), and one fun detail (a mascot, a quirk, a mismatched item).

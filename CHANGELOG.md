@@ -4,6 +4,11 @@ The plugin tracks commits on `main`; notable changes are listed here by date.
 
 ## 2026-11-02
 
+- **Reference images in art prompts** (`game-asset-pipeline/art-prompts.md`): use a reference whenever one helps,
+  since models follow a picture better than words for framing, angle, size and layout; turn a reference from another
+  game or a photo into a plain layout guide (measured flat shapes) so the model copies the composition, not the art;
+  bordered screen-shaped frames for art that must meet the screen edges; and on refusals or repeated misses, ask the
+  user for a reference or give them the prompt for another tool instead of rewording around the filter.
 - **Any engine:** `game-detail-bar` and `game-asset-pipeline` now say what to do in a browser, Godot and Unity
   wherever the how differs:
   - automated walks and screenshots (Playwright, `godot --headless` with GUT or GdUnit4, Unity Test Runner);
