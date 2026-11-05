@@ -544,12 +544,8 @@ warm-up, 3D measurement).
   versions that both show "60 FPS" can differ several times over in cost; the cheaper one just idles longer. Compare
   milliseconds of work per frame, the worst frame, draw calls and triangles, and push the load up until the cap
   breaks to find the real headroom.
-- **Build the measuring tools into the game behind the QA flag:**
-  - a live readout (frame time, worst frame in the last half second, draw calls, triangles or sprites, object
-    counts);
-  - a key that switches between a low and a high detail level, so the cost of detail is seen live instead of argued
-    about;
-  - a stress key that adds a big batch of enemies or effects at once.
+- **A live readout behind the QA flag:** frame time, worst frame in the last half second, draw calls, triangles or
+  sprites, and object counts.
 - **Measure the worst case:** the biggest crowd the game can produce, the busiest effect, and every animated menu or
   card screen (they are often slower than play).
 - **Find the cost, don't guess:**

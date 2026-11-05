@@ -79,8 +79,7 @@ rules keep it that way.
   marches in step.
 - **Gore and deaths use the model itself:** on death, spawn chunks at random points inside each part's box in that
   part's colours (shirt, skin, shoes, blood), thrown away from the shot. A headshot throws the head harder.
-- **Far characters drop to the low model** (plain boxes in the outfit colours) and lower update rates; a toggle between
-  the two is also the quickest way to measure what the detail costs.
+- **Far characters drop to the low model** (plain boxes in the outfit colours) and lower update rates.
 
 ## 6. First-person weapon and hands
 
@@ -106,8 +105,7 @@ rules keep it that way.
 
 ## 8. Budgets and measurement
 
-- **Count triangles and draw calls in the busiest view** with the detail toggle and a stress key (core section 13),
-  and keep the numbers in the spec. As a starting point: a voxel character a few thousand triangles after greedy
+- **Count triangles and draw calls in the busiest view** (core section 13) and keep the numbers in the spec. As a starting point: a voxel character a few thousand triangles after greedy
   meshing, a first-person weapon about ten thousand, the whole visible world under about a million triangles on a
   desktop and a few hundred thousand on a phone, draw calls in the low hundreds.
 - **Shadows double the triangle count** of everything that casts: crowds and big props cast, litter, decals and
@@ -130,5 +128,4 @@ rules keep it that way.
 - [ ] First-person arms aim at an off-screen elbow; reloads keyframed with sounds on events and ammo at the seat;
       model colours in the right colour space.
 - [ ] Models from a voxel editor or generation, one palette, checked in game.
-- [ ] Triangles, draw calls and worst frame measured with the detail toggle and a stress test; only key objects cast
-      shadows.
+- [ ] Triangles, draw calls and worst frame measured in the busiest view; only key objects cast shadows.
