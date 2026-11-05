@@ -2,6 +2,20 @@
 
 The plugin tracks commits on `main`; notable changes are listed here by date.
 
+## 2026-11-05
+
+- **New genre guide `voxel-worlds.md`:** block grid and coordinate conventions, face culling, greedy meshing, baked
+  per-vertex ambient occlusion, padded atlas tiles, chunk rebuilds (off the main thread when large), grid (DDA) ray
+  casts and per-axis box collision with step-up, walkable maps and flow fields that update when blocks break,
+  destruction and instanced debris, instanced rigid-part crowds with outfits and gore from the model's own colours,
+  first-person voxel weapons with arms aimed at an off-screen elbow and keyframed reloads, the voxel art pipeline and
+  budgets.
+- **Measuring (core section 13):** read frame time, not FPS, since the refresh rate caps FPS; build a live readout, a
+  low/high detail toggle and a stress key into the game behind the QA flag.
+- **3D scenes:** crowds from instanced rigid parts or shader-baked animation instead of one skinned mesh each, small
+  lights faked with emissive meshes and glow decals, and a new first-person view part (own render pass, matched
+  lighting, arms always joined to the body, sway, bob, recoil, draw and casings).
+
 ## 2026-11-02
 
 - **Reference images in art prompts** (`game-asset-pipeline/art-prompts.md`): use a reference whenever one helps,

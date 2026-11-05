@@ -1,6 +1,6 @@
 ---
 name: game-detail-bar
-description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, accessibility, teaching the player, input and rebinding, mobile, simulation timing, seeded randomness and physics, saves and error recovery, performance and working method, for a browser, Godot, Unity or any engine. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds, 3D scenes) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
+description: The attention-to-detail bar for building any game in any genre - presentation and camera, feedback on every player action, sound and music, animation, content that never repeats, characters and options that each play differently, scoring and balance, testing, art direction, UI and HUD layout that never spills out of its frames, UI motion, accessibility, teaching the player, input and rebinding, mobile, simulation timing, seeded randomness and physics, saves and error recovery, performance and working method, for a browser, Godot, Unity or any engine. Genre guides (action combat, side-view platforming, run-based roguelites, sims and economies, real-time multiplayer, open worlds, 3D scenes, voxel worlds) add rules on top when the game fits. Use when pitching, specifying, building, reviewing or reporting on any game or game feature.
 ---
 
 # Game detail bar
@@ -43,6 +43,7 @@ the *how* differs, a rule says so: "in a browser" for web games (canvas, WebGL, 
 | [genres/multiplayer-realtime.md](genres/multiplayer-realtime.md) | Two or more players in one live game over a network, co-op or versus |
 | [genres/open-world.md](genres/open-world.md) | One large continuous world the player roams freely, far bigger than the screen |
 | [genres/3d-scenes.md](genres/3d-scenes.md) | A 3D world of any genre: models, animation, lighting, shadows and 3D performance |
+| [genres/voxel-worlds.md](genres/voxel-worlds.md) | A world, characters or props built from blocks, especially with breakable terrain or big crowds |
 
 There is no guide yet for puzzle, racing, card, rhythm, turn-based or strategy games; the rules in this file still
 apply to them. Add a guide only after shipping that kind of game, from what was actually learned. Never invent one.
@@ -539,6 +540,16 @@ warm-up, 3D measurement).
   - In an engine, run a development build on a real low-to-mid phone with the profiler attached (Godot remote
     debugging with the Profiler and Monitors; Unity Profiler attached to a Development Build). A desktop gives no
     reliable phone simulation for native builds.
+- **Read frame time, not FPS.** The frame rate is capped at the screen's refresh rate (60, 120 or 144 Hz), so two
+  versions that both show "60 FPS" can differ several times over in cost; the cheaper one just idles longer. Compare
+  milliseconds of work per frame, the worst frame, draw calls and triangles, and push the load up until the cap
+  breaks to find the real headroom.
+- **Build the measuring tools into the game behind the QA flag:**
+  - a live readout (frame time, worst frame in the last half second, draw calls, triangles or sprites, object
+    counts);
+  - a key that switches between a low and a high detail level, so the cost of detail is seen live instead of argued
+    about;
+  - a stress key that adds a big batch of enemies or effects at once.
 - **Measure the worst case:** the biggest crowd the game can produce, the busiest effect, and every animated menu or
   card screen (they are often slower than play).
 - **Find the cost, don't guess:**

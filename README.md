@@ -30,8 +30,9 @@ make sense for one kind of game live in a genre guide that Claude reads when the
 | [run-based roguelites](skills/game-detail-bar/genres/roguelite-runs.md) | Runs of rooms or floors: rooms with identity, rewards and builds, meta progress |
 | [sims and economies](skills/game-detail-bar/genres/sim-economy.md) | Money or resource loops: goals, fairness, upgrades, collections, balance simulation |
 | [real-time multiplayer](skills/game-detail-bar/genres/multiplayer-realtime.md) | Live online play: choosing a netcode model, each player owning their character, smooth snapshots, binary messages, testing with lag |
-| [3D scenes](skills/game-detail-bar/genres/3d-scenes.md) | Any game drawn in 3D: model conventions and budgets, GPU texture compression, shader warm-up, animation blending, lighting, shadows, 3D performance |
+| [3D scenes](skills/game-detail-bar/genres/3d-scenes.md) | Any game drawn in 3D: model conventions and budgets, GPU texture compression, shader warm-up, animation blending, lighting, shadows, first-person views, 3D performance |
 | [open worlds](skills/game-detail-bar/genres/open-world.md) | One large world to roam: chunks, chunk culling, streaming chunks in and out, instanced drawing |
+| [voxel worlds](skills/game-detail-bar/genres/voxel-worlds.md) | Worlds and models built from blocks: greedy meshing, baked corner shading, chunk rebuilds, grid ray casts and collision, destruction and debris, instanced voxel crowds, first-person voxel weapons, budgets |
 
 A game can use several guides at once. Genres without a guide (puzzle, racing, cards, rhythm, turn-based, strategy)
 still get every core rule; a guide is added only after shipping that kind of game, from what was learned.

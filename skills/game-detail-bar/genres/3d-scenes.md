@@ -2,8 +2,9 @@
 
 Read this on top of the core rules in [../SKILL.md](../SKILL.md) for any game drawn in 3D, whatever its genre: an
 action game, a racer, a cosy sim, a 2.5D side view built from 3D models. It covers models, animation, lighting,
-shadows and 3D performance, with notes for three.js in a browser, Godot and Unity. Pair it with
-[open-world.md](open-world.md) when the world is large.
+shadows, first-person views and 3D performance, with notes for three.js in a browser, Godot and Unity. Pair it with
+[open-world.md](open-world.md) when the world is large and [voxel-worlds.md](voxel-worlds.md) when it is built
+from blocks.
 
 ## 1. Models
 
@@ -50,6 +51,10 @@ shadows and 3D performance, with notes for three.js in a browser, Godot and Unit
   the blow connects (the core rule that timing windows match the art).
 - **Decide root motion once:** either clips move the character (root motion) or code moves it and clips play in
   place. Mixing the two per clip makes characters drift.
+- **Crowds without skinning:** when dozens or hundreds of the same enemy are on screen, build them from rigid parts
+  (head, torso, limbs) with pivots at the joints and animate the joint rotations, drawing each kind of part as one
+  instanced mesh; or bake the clips into a texture and play them in the vertex shader. Skinned meshes with their own
+  mixer each are for heroes, bosses and small groups.
 - **Death and big knockbacks** may hand the body to physics (a ragdoll with joint limits, see the core simulation
   rules) and blend back to animation when getting up.
 
@@ -66,6 +71,10 @@ shadows and 3D performance, with notes for three.js in a browser, Godot and Unit
   tonemapping in Unity), so the same model looks the same in every scene.
 - **Fog and atmosphere** give depth and hide the far edge of the draw distance; the core atmosphere rules (light
   shafts, particles, a time-of-day grade) apply in 3D too.
+
+- **Fake the small lights:** street lamps, windows and glowing signs are an emissive mesh plus a soft additive glow
+  decal on the ground, not real lights. Keep real lights for the one key light and short flashes (a muzzle flash
+  light that fades in a few frames).
 
 ## 5. Shadows
 
@@ -88,7 +97,20 @@ shadows and 3D performance, with notes for three.js in a browser, Godot and Unit
   when the scene is busy, scenery between the camera and the player fading out (core section 1), and a camera that
   pulls in instead of passing through walls.
 
-## 7. Performance and measurement
+## 7. First-person view
+
+- **The held weapon and hands are drawn in their own pass:** a second scene and camera rendered after the world with
+  the depth cleared (in Godot a separate viewport or a render layer on top; in Unity a camera stack or a render
+  feature), so the weapon never pokes into walls and keeps its own field of view while the world camera zooms for
+  aiming.
+- **Light it to match the world** (same key light direction and colour, a little extra fill so it reads), and flash it
+  with the muzzle light.
+- **It always reads as one body:** the hands hold the weapon, the arms lead back toward the shoulders off screen in
+  every pose, and the weapon sits small in a lower corner pointing forward at hip, moving to the centre when aiming.
+- **Motion:** sway that lags behind the look, a bob with walking (less while aiming), a recoil kick that springs back,
+  a draw animation, and casings ejected from the port.
+
+## 8. Performance and measurement
 
 - **Draw calls are the first budget.** Repeated objects are instanced (three.js `InstancedMesh` or `BatchedMesh`,
   Godot `MultiMeshInstance3D`, Unity GPU instancing or the SRP Batcher), static scenery is merged or batched, and
@@ -116,5 +138,9 @@ shadows and 3D performance, with notes for three.js in a browser, Godot and Unit
       colour pipeline with tone mapping; fog for depth.
 - [ ] Only key objects cast shadows from a tight shadow camera; every character has a contact shadow.
 - [ ] Cutout for foliage, few blended transparents, no billboard scenery; the player reads at a glance.
+- [ ] Crowds use instanced rigid parts or shader-baked animation, not one skinned mesh each; small lights faked with
+      emissive meshes and glow decals.
+- [ ] First-person weapon and hands in their own pass, lit to match, arms always joined to the body, with sway, bob,
+      recoil, draw and casings.
 - [ ] Draw calls, triangles and texture memory measured in the busiest view on a phone, with instancing, batching,
       a capped resolution and phone presets for effects.
