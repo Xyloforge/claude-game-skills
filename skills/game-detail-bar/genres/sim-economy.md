@@ -2,7 +2,7 @@
 
 Read this on top of the core rules in [../SKILL.md](../SKILL.md) for any game built around a money or resource loop:
 days or seasons, a shop, upgrades, orders, customers, quotas, collecting (fishing, farming, cooking, running a
-stall or a town). Example numbers are in [../reference.md](../reference.md).
+stall or a town), and incremental or idle games whose numbers grow forever (section 6). Example numbers are in [../reference.md](../reference.md).
 
 ## 1. The loop
 
@@ -54,6 +54,31 @@ stall or a town). Example numbers are in [../reference.md](../reference.md).
 - **Comment where every measured number came from** ("a served customer is replaced about 8.5 s after the sale,
   measured in game").
 
+## 6. Incremental and idle loops
+
+For games whose numbers grow forever (clickers, idle games, simulator-style "train, upgrade, rebirth" loops). Their
+pull is anticipation of the next bigger thing, not fear of losing.
+
+- **No loss at all.** The main action always pays; luck only varies upward (a bad roll is a common item, never a
+  loss); there is no deadline, only the next visible goal. Mixing in a fail state halfway loses both kinds of pull.
+- **The first action is the main reward.** Name the peak the loop builds toward (smashing the boss, opening the
+  egg), hand the player the tool for it at spawn and put the target straight ahead, so the first thing they ever do
+  is the payoff. Supporting systems (selling, a shop, a collection) are taught only when the player needs them.
+- **Show something better than what the player has, in the first minute and in view:** a rival with a bigger item, a
+  later tier in use, a locked area with something happening in it. Desire comes from seeing it, not from a text goal.
+  Computer rivals are labelled as such; never pass them off as real players.
+- **Make late-game scale absurd,** and visible in the world: the thing that grows starts normal and ends ridiculous
+  (grow length much faster than width so the player is never hidden; cap it where there is no room), and the base or
+  workshop changes look with each tier so progress reads from a distance.
+- **Space the big rewards like a level curve.** The wait between two big rewards grows by a small step each time and
+  never multiplies; check it with a pacing simulation that caps the longest wait in the first 20 minutes.
+- **More levels, not pricier levels.** When an upgrade maxes out too early, give it more levels with smaller steps
+  instead of steeper prices; each level is a small purchase beat, a steep price is a wall.
+- **Boosts are optional offers.** A short boost appears where the player is looking and is taken with one tap; if
+  ignored, the normal effect still happens, so an idle player is never punished and nothing interrupts the loop.
+- **Time away always progresses:** income while away (capped, the cap shown), collected on one welcome-back claim
+  that pays even if closed; a hidden tab plays out its time when the player returns. Menus never pause the world.
+
 ## Checklist
 
 - [ ] Goals shown up front; days or seasons differ; orders grow with gear and never ask for locked things.
@@ -61,3 +86,6 @@ stall or a town). Example numbers are in [../reference.md](../reference.md).
 - [ ] Upgrades in levels, visible in the world; rarity tiers; a journal with silhouettes.
 - [ ] The core action's feedback and gauge scale with what is at stake.
 - [ ] A bot simulation with weak, average and good players supports the prices and quotas.
+- [ ] Incremental games: no loss; the first action is the main reward; something better is visible in the first
+      minute; late scale is absurd and shows in the world; big rewards spaced like a level curve; more levels rather
+      than pricier ones; boosts are optional; time away progresses.

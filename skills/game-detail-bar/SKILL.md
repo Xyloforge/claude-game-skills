@@ -39,7 +39,7 @@ the *how* differs, a rule says so: "in a browser" for web games (canvas, WebGL, 
 | [genres/action-combat.md](genres/action-combat.md) | Real-time fighting of any kind: melee, shooting, spells, enemies that attack, bosses |
 | [genres/platformer-side-view.md](genres/platformer-side-view.md) | A side view with jumping, ledges and levels the player travels through |
 | [genres/roguelite-runs.md](genres/roguelite-runs.md) | Runs built from rooms, floors or waves, random rewards, builds, and progress kept between runs |
-| [genres/sim-economy.md](genres/sim-economy.md) | A money or resource loop: days or seasons, shops, upgrades, orders, customers, quotas |
+| [genres/sim-economy.md](genres/sim-economy.md) | A money or resource loop: days or seasons, shops, upgrades, orders, customers, quotas; incremental and idle games |
 | [genres/multiplayer-realtime.md](genres/multiplayer-realtime.md) | Two or more players in one live game over a network, co-op or versus |
 | [genres/open-world.md](genres/open-world.md) | One large continuous world the player roams freely, far bigger than the screen |
 | [genres/3d-scenes.md](genres/3d-scenes.md) | A 3D world of any genre: models, animation, lighting, shadows and 3D performance |
@@ -64,12 +64,24 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   - *Spring jolt:* holds through any freeze, then snaps back with a slight overshoot.
   - *Zoom punch:* a quick scale or FOV change on the biggest moments (a heavy impact, a big catch, a combo clearing
     the board, a landing).
-  - *Lean-in:* zoom in a little during a focused moment (a duel, a tense reel, a final move).
+  - *Lean-in:* zoom in a little during a focused moment (a duel, a tense reel, a final move), only with a camera the
+    game drives (a fixed or follow camera), never one the player steers (below).
+- **A camera the player steers is theirs.** Where the player orbits, drags or zooms the camera (third-person 3D, a
+  draggable map), never move it for them: no swing when they step onto something, no zoom in at a boss, no look-ahead
+  offset while they act, no recentre after an event. Each of these reads as "the game pulled me". Event feedback (a
+  shake, a kick, a zoom punch) is allowed because it returns exactly to where the player left the camera.
+- **Never move the character for the player either.** No glide onto a target spot, no step back after an action;
+  the character only turns to face what they use. Teleport only on travel the player asked for (a portal, a home
+  button), hidden by a short flash. A snap onto a spot is acceptable only where the spot is part of the action (the
+  hands must line up with a workbench), and never as a habit.
 - **Portrait or narrow screens get their own framing** (distance, FOV, zoom), not the landscape one squeezed.
 - **Scenery between the camera and the focus fades out** (walls, roofs, banners in 2.5D or 3D).
 - **Off-screen things that matter get an edge arrow:** the objective, a teammate, a rare find.
 - **Slow motion and zoom are rewards:** a perfect move, a final blow, a rare catch, the last piece falling into
-  place. Keep them short and earned.
+  place. Keep them short and earned. Slow motion and long freezes only work where the game already holds a steady
+  high frame rate on the target devices and the player expects them (action, fighting). In browser, idle and casual
+  games they read as the game lagging: there, make the big moment big with a zoom punch, a shake, a break-apart and
+  one heavy sound, and keep time running.
 - **Cutscenes:** letterbox bars, the subject framed and clear of the bars at any zoom, and every cutscene skippable
   after it has been seen once.
 
@@ -92,6 +104,14 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
   everywhere in the game, and the warning code in one place so every source of danger uses it.
 - **Input buffer:** a press a little early (about 0.15 s) still counts, exactly once, and a final press never skips
   the ending or reward screen.
+- **One reward text at a time.** Layers are sounds, sparks, glows and counter bumps, not words. At any moment show at
+  most two reward texts: the small number from the action and one headline. When several rewards land together, a
+  fixed priority picks the headline (a new item > a new best > a rarity name) and the rest show without words (a
+  counter bump, an edge flash, a sound); the others wait in a queue. Small numbers clear while a headline shows, and
+  a rising headline never leaves the screen.
+- **Show a state on the thing it changes,** not in a bar or a sentence: a boost makes the character glow, an upgrade
+  changes the tool's look, a tier changes the base. A side effect shows itself in the world instead of announcing
+  itself.
 
 ## 3. Sound and music
 
@@ -234,6 +254,15 @@ These apply to any view: a board, a map, a side view, top-down or 3D.
 
 ### 9a. Look
 
+- **One thing to look at, two at most, counted over the whole screen.** Decide for every moment and every menu where
+  the eye should land first. Colour only where the eye should go (the one action that matters, the reward); one hero
+  button per menu, with its gain as the biggest number; neutral everything else. A calm menu over a HUD that still
+  pulses, bounces and counts is still overload, so while a menu is open the HUD steps back (side buttons slide off,
+  floating numbers stop, the world dims behind the panel). During play show only the essentials: the currency, the
+  main stat and the next goal. A screen where every card, button and header has its own colour has no focus, so
+  nothing gets pressed.
+- **Icons, colour and numbers over sentences** in play: a silhouette, an arrow, a count say it faster than a caption
+  ("Boss in 3 levels" becomes the boss's silhouette and a 3). Short tips are fine; banners of sentences are not.
 - **Painted UI kit and bundled fonts, never system fonts or plain rect bars.** 9-slice panels, themed frames, icons
   at native sizes, fonts bundled with the game with their license (woff2 in a browser).
 - **A HUD that lives:** counters that roll up and bump, a time dial that pulses near the end, a recoverable-damage
@@ -584,7 +613,10 @@ warm-up, 3D measurement).
 
 ## Done checklist (go through it before saying "done")
 
-- [ ] Camera eases and reacts (shake, kick, jolt, zoom); the HUD stays still; portrait has its own framing.
+- [ ] Camera eases and reacts (shake, kick, jolt, zoom); the HUD stays still; portrait has its own framing; a camera
+      the player steers is never moved for them, and the character is never moved for them.
+- [ ] One thing to look at, two at most, across the whole screen: one reward headline at a time, one hero action per
+      menu, the HUD quiet under menus, icons and numbers instead of sentences.
 - [ ] Every action answers at once with sight, sound and motion scaled to its weight; response time measured;
       effects anchored to the art; warnings match real timings.
 - [ ] Every new action has its own recorded SFX (list new vs reused), with variation and a voice limit; ambience and
