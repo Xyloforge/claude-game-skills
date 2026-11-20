@@ -2,6 +2,19 @@
 
 The plugin tracks commits on `main`; notable changes are listed here by date.
 
+## 2026-11-20
+
+- **Hands off (core section 1):** a camera the player steers is never moved or zoomed for them, and the character is
+  never moved for them; event feedback must return to where the player left the camera. Slow motion and long
+  freezes only where the game holds a steady high frame rate and players expect them; in browser, idle and casual
+  games they read as lag.
+- **One focus (core sections 2 and 9a):** one reward text at a time with a fixed headline priority and a queue,
+  states shown on the thing they change, and one thing to look at (two at most) across the whole screen, with the
+  HUD stepping back under menus; icons and numbers over sentences.
+- **Sims and economies:** a new section for incremental and idle loops: no loss, the first action is the main
+  reward, something better visible in the first minute, absurd late scale shown in the world, big rewards spaced
+  like a level curve, more levels rather than pricier ones, optional boosts, time away always progresses.
+
 ## 2026-11-05
 
 - **New genre guide `voxel-worlds.md`:** block grid and coordinate conventions, face culling, greedy meshing, baked
